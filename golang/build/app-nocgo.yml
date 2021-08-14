@@ -1,0 +1,31 @@
+- path@env: ./cmd/${GOLANG_APP_NAME}
+  cgo:
+    enabled: false
+  matrix@http: https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master/golang/matrix/common.yml
+  tags:
+  - nokube
+  - nocloud
+  - netgo
+  ldflags@env:
+  - -s -w
+  - -X "${GO_MODULE_NAME}/pkg/version.branch=${GIT_BRANCH}"
+  - -X "${GO_MODULE_NAME}/pkg/version.commit=${GIT_COMMIT}"
+  - -X "${GO_MODULE_NAME}/pkg/version.tag=${GIT_TAG}"
+  - -X "${GO_MODULE_NAME}/pkg/version.arch=${MATRIX_ARCH}"
+  - -X "${GO_MODULE_NAME}/pkg/version.workspaceClean=${GIT_WORKTREE_CLEAN}"
+  - -X "${GO_MODULE_NAME}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
+  outputs@shell: |-
+    suffix=""
+    if [[ "${MATRIX_KERNEL}" == "windows" ]]; then
+      suffix="${suffix}.exe"
+    fi
+
+    if [[ "${MATRIX_KERNEL}" == "${HOST_KERNEL}" ]] && [[ "${MATRIX_ARCH}" == "${HOST_ARCH}" ]]; then
+      echo "- build/${GOLANG_APP_NAME}${suffix}"
+    fi
+
+    echo "- build/${GOLANG_APP_NAME}.${MATRIX_KERNEL}.${MATRIX_ARCH}${suffix}"
+  extra_args:
+  - -buildmode=exe
+  - -mod=vendor
+  - -trimpath
