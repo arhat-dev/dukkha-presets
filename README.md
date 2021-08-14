@@ -1,13 +1,13 @@
-# Template Repo
+# dukkha-presets
 
 [![CI](https://github.com/arhat-dev/template-repo/workflows/CI/badge.svg)](https://github.com/arhat-dev/template-repo/actions?query=workflow%3ACI)
 
-Base template for more specific repo templates
+Shared `dukkha` config recipes for `arhat-dev`
 
 ## LICENSE
 
 ```txt
-Copyright 2020 The arhat.dev Authors.
+Copyright 2021 The arhat.dev Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
