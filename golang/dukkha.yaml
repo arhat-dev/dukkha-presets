@@ -1,0 +1,26 @@
+global:
+  env:
+  - name: GO_MODULE_NAME
+    value: arhat.dev/dukkha-preset
+  - name: GOLANG_APP_NAME
+    value: dukkha-preset
+
+renderers:
+  http:
+    enable_cache: true
+    cache_max_age: 5s
+
+tools:
+  golang:
+  - name: local
+
+golang:build@echo!:
+  value@template|http: |-
+    https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master/golang/
+    {{- /* join */ -}}
+    build/app-nocgo.yml
+  patches:
+  - { op: add, path: /0/name, value@env: "${GOLANG_APP_NAME}" }
+  # following values are only meant for testing
+  - { op: add, path: /0/chdir, value: ./golang/testdata }
+  - { op: replace, path: /0/path@env, value: ./ }
