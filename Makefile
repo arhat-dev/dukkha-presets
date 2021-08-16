@@ -17,7 +17,7 @@ include scripts/lint.mk
 .PHONY: test.golang
 test.golang:
 	dukkha -c golang/dukkha.yaml \
-		golang local build dukkha-preset
+		golang local build dukkha-preset -v verbose
 
 .PHONY: test.all
 test.all: \

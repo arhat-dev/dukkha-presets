@@ -11,14 +11,14 @@ renderers:
     cache_max_age: 5s
 
 tools:
-  golang:
-  - name: local
+  golang@echo!:
+    value:
+    - name: local
+    merge:
+    - data@file: golang/tool-in-docker.yml
 
-golang:build@echo!:
-  value@template|http: |-
-    https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master/golang/
-    {{- /* join */ -}}
-    build/app-nocgo.yml
+golang:build@file!:
+  value: golang/build/app-nocgo.yml
   patches:
   - { op: add, path: /0/name, value@env: "${GOLANG_APP_NAME}" }
   # following values are only meant for testing
