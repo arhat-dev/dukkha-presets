@@ -50,7 +50,7 @@ rules:
     check-multi-line-strings: false
   quoted-strings:
     quote-type: double
-    required: only-when-needed
+    required: false
   key-duplicates: enable
   line-length:
     level: warning
