@@ -1,0 +1,22 @@
+include:
+- buildah/dukkha.yaml
+- golang/dukkha.yaml
+
+tools:
+  workflow:
+  - name: local
+
+renderers:
+  env:
+    enable_exec: true
+
+workflow:run:
+- name: test
+  matrix:
+    preset:
+    - golang
+    # TODO: fix upstream image build and enable this
+    #       https://github.com/arhat-dev/dockerfile/issues/74
+    # - buildah
+  jobs:
+  - task@template: workflow:run(test-{{ matrix.preset }}, {})

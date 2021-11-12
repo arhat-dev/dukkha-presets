@@ -14,11 +14,6 @@
 
 include scripts/lint.mk
 
-.PHONY: test.golang
-test.golang:
-	dukkha -c golang/dukkha.yaml \
-		golang local build dukkha-preset -v verbose
-
-.PHONY: test.all
-test.all: \
-	test.golang
+.PHONY: test
+test:
+	dukkha run workflow local run test

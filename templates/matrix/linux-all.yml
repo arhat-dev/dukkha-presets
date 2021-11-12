@@ -1,0 +1,12 @@
+kernel:
+- linux
+arch:
+- arm64
+- amd64
+- armv7
+- armv6
+- armv5
+- mips64le
+- ppc64le
+- s390x
+- x86

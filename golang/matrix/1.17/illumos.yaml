@@ -1,0 +1,4 @@
+kernel:
+- illumos
+arch:
+- amd64

@@ -1,31 +1,36 @@
-- path@env: ./cmd/${GOLANG_APP_NAME}
-  cgo:
-    enabled: false
-  matrix@http: https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master/golang/matrix/common.yml
-  tags:
-  - nokube
-  - nocloud
-  - netgo
-  ldflags@env:
-  - -s -w
-  - -X "${GO_MODULE_NAME}/pkg/version.branch=${GIT_BRANCH}"
-  - -X "${GO_MODULE_NAME}/pkg/version.commit=${GIT_COMMIT}"
-  - -X "${GO_MODULE_NAME}/pkg/version.tag=${GIT_TAG}"
-  - -X "${GO_MODULE_NAME}/pkg/version.arch=${MATRIX_ARCH}"
-  - -X "${GO_MODULE_NAME}/pkg/version.workspaceClean=${GIT_WORKTREE_CLEAN}"
-  - -X "${GO_MODULE_NAME}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
-  outputs@shell: |-
-    suffix=""
-    if [[ "${MATRIX_KERNEL}" == "windows" ]]; then
-      suffix="${suffix}.exe"
-    fi
+# Required Env: MODULE_NAME
+# Required extra matrix vector name: cmd, kernel, arch
 
-    if [[ "${MATRIX_KERNEL}" == "${HOST_KERNEL}" ]] && [[ "${MATRIX_ARCH}" == "${HOST_ARCH}" ]]; then
-      echo "- build/${GOLANG_APP_NAME}${suffix}"
-    fi
+path@template: ./cmd/{{- matrix.cmd -}}
+cgo:
+  enabled: false
+tags:
+- netgo
+- osusergo
+- timetzdata
 
-    echo "- build/${GOLANG_APP_NAME}.${MATRIX_KERNEL}.${MATRIX_ARCH}${suffix}"
-  extra_args:
-  - -buildmode=exe
-  - -mod=vendor
-  - -trimpath
+ldflags@template:
+- -s -w
+- -X "{{- env.MODULE_NAME -}}/pkg/version.branch={{- env.GIT_BRANCH -}}"
+- -X "{{- env.MODULE_NAME -}}/pkg/version.commit={{- env.GIT_COMMIT -}}"
+- -X "{{- env.MODULE_NAME -}}/pkg/version.tag={{- env.GIT_TAG -}}"
+- -X "{{- env.MODULE_NAME -}}/pkg/version.arch={{- matrix.arch -}}"
+- -X "{{- env.MODULE_NAME -}}/pkg/version.workspaceClean={{- env.GIT_WORKTREE_CLEAN -}}"
+# TODO
+# - -X "{{- env.MODULE_NAME -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
+
+outputs@template: |-
+  {{- $suffix := "" -}}
+  {{- if eq matrix.kernel "windows" -}}
+    {{- $suffix = ".exe" -}}
+  {{- end -}}
+
+  {{- if and (eq matrix.kernel env.HOST_KERNEL) (eq matrix.arch env.HOST_ARCH) }}
+  - build/{{- matrix.cmd -}}{{- $suffix -}}
+  {{- end }}
+  - build/{{- matrix.cmd -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}{{- $suffix -}}
+
+extra_args:
+- -buildmode=exe
+- -mod=vendor
+- -trimpath

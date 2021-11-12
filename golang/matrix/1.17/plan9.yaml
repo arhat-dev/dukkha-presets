@@ -1,0 +1,6 @@
+kernel:
+- plan9
+arch:
+- x86
+- amd64
+- arm

@@ -1,0 +1,4 @@
+kernel:
+- js
+arch:
+- wasm

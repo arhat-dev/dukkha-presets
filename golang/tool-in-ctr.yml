@@ -1,0 +1,229 @@
+# Optional env:
+#   - DOCKER_CLI the docker cli compatible command for running container
+#   - VOLUME_NAME for caching go modules in container
+#   - WORKING_DIR for switching to different golang project
+#   - IMAGE to override default golang image
+#   - IMAGE_FLAVOR set which type of golang image to use, only effective when IMAGE is not set
+#                  possible values:
+#                  - native (alias of alpine-native)
+#                  - alpine-native (default, use same arch image as host arch, no cross gcc toolchain, alpine based)
+#                  - debian-navive (same as alpine-native, but based on debian)
+#
+#                  - cross (alias of alpine-cross)
+#                  - alpine-cross (use same arch image as host arch, with cross gcc, alpine based
+#                                  when matrix.arch is not supported by alpine, automatically use debian based image
+#                                  if no cross toolchain for host_arch, fallback to qemu mode
+#                  - debian-cross (same as alpine-cross, but debian based)
+#
+#                  - qemu (alias of alpine-qemu)
+#                  - alpine-qemu (use target matrix.arch image, should have qemu-static configured in host)
+#                                 when matrix.arch is not supported by alpine, automatically use debian based image
+#                  - debian-qemu (same as alpine-qemu, but debian based)
+use_shell: false
+shell_name: ""
+cmd@template: |-
+  {{- $flavor := env.IMAGE_FLAVOR | default "native" -}}
+  {{- $ver := env.GO_VERSION | default "1.17" -}}
+  {{- $arch := trimSuffix "sf" (default env.HOST_ARCH matrix.arch) -}}
+  {{- $host_arch := trimSuffix "sf" (default "amd64" env.HOST_ARCH) -}}
+  {{- $cgo := eq env.CGO_ENABLED "1" "true" -}}
+
+  {{- $tag := "" -}}
+  {{- if eq $flavor "" "native" "alpine-native" -}}
+
+    {{- $tag = printf "%s-alpine" $ver -}}
+
+  {{- else if eq $flavor "debian-native" -}}
+
+    {{- $tag = printf "%s-debian" $ver -}}
+
+  {{- else if eq $flavor "cross" "alpine-cross" -}}
+
+    {{- $host_arch := env.HOST_ARCH -}}
+    {{- if and (and
+          $cgo (ne env.HOST_ARCH $arch)
+        )
+        (not (eq env.HOST_ARCH "amd64")) -}}
+      {{- $host_arch = $arch -}}
+    {{- end -}}
+
+    {{- if eq $arch "armv5" "mips64le" -}}
+      {{- if and (and
+            $cgo (ne env.HOST_ARCH $arch)
+          )
+          (not (eq env.HOST_ARCH "amd64" "arm64")) -}}
+        {{- $host_arch = $arch -}}
+      {{- end -}}
+      {{- $tag = printf "%s-debian-%s-%s" $ver $host_arch $arch -}}
+    {{- else -}}
+      {{- $tag = printf "%s-alpine-%s-%s" $ver $host_arch $arch -}}
+    {{- end -}}
+
+  {{- else if eq $flavor "debian-cross" -}}
+
+    {{- $host_arch := env.HOST_ARCH -}}
+    {{- if and (and
+          $cgo (ne env.HOST_ARCH $arch)
+        )
+        (not (eq env.HOST_ARCH "amd64" "arm64")) -}}
+      {{- $host_arch = $arch -}}
+    {{- end -}}
+
+    {{- if eq $arch "armv6" -}}
+      {{- if and (and
+            $cgo (ne env.HOST_ARCH $arch)
+          )
+          (not (eq env.HOST_ARCH "amd64")) -}}
+        {{- $host_arch = $arch -}}
+      {{- end -}}
+      {{- $tag = printf "%s-alpine-%s-%s" $ver $host_arch $arch -}}
+    {{- else -}}
+      {{- $tag = printf "%s-debian-%s-%s" $ver $host_arch $arch -}}
+    {{- end -}}
+
+  {{- else if eq $flavor "qemu" "alpine-qemu" -}}
+
+    {{- if eq $arch "armv5" "mips64le" -}}
+      {{- $tag = printf "%s-debian-%s" $ver $arch -}}
+    {{- else -}}
+      {{- $tag = printf "%s-alpine-%s" $ver $arch -}}
+    {{- end -}}
+
+  {{- else if eq $flavor "debian-qemu" -}}
+
+    {{- if eq $arch "armv6" -}}
+      {{- $tag = printf "%s-alpine-%s" $ver $arch -}}
+    {{- else -}}
+      {{- $tag = printf "%s-debian-%s" $ver $arch -}}
+    {{- end -}}
+
+  {{- end -}}
+
+  {{- $image := env.IMAGE | default (printf "ghcr.io/arhat-dev/builder-golang:%s" $tag) -}}
+  {{- $docker_cli := values.tools.docker_cli }}
+  {{- if not $docker_cli -}}
+    {{- $docker_cli = strings.Split " " (default "docker run -t" env.DOCKER_CLI) -}}
+  {{- end }}
+  {{- range $_, $v := $docker_cli }}
+    {{- if $v }}
+  - {{ $v }}
+    {{- end }}
+  {{- end }}
+    {{- if env.VOLUME_NAME }}
+  - -v
+  - {{ env.VOLUME_NAME -}}:/go/pkg/mod
+    {{- end }}
+  - --workdir
+  - {{ env.WORKING_DIR | default env.DUKKHA_WORKING_DIR }}
+  - -v
+  - {{ env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR }}
+
+  # always use gomod
+  - -e
+  - GO111MODULE=on
+
+    {{- if env.GOFLAGS }}
+  - -e
+  - GOFLAGS={{- env.GOFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.GOEXPERIMENT }}
+  - -e
+  - GOEXPERIMENT={{- env.GOEXPERIMENT | default "" }}
+    {{- end }}
+
+    {{- if env.GOEXE }}
+  - -e
+  - GOEXE={{- env.GOEXE | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_ENABLED }}
+  - -e
+  - CGO_ENABLED={{- env.CGO_ENABLED | default "0" }}
+    {{- end }}
+
+    {{- if env.GO_PROXY }}
+  - -e
+  - GO_PROXY={{- env.GO_PROXY | default "" }}
+    {{- end }}
+
+    {{- if env.GOSUMDB }}
+  - -e
+  - GOSUMDB={{- env.GOSUMDB | default "" }}
+    {{- end }}
+
+  - -e
+  - GOOS={{- env.GOOS | default "" }}
+  - -e
+  - GOARCH={{- env.GOARCH | default "" }}
+  - -e
+  - GO386={{- env.GO386 | default "" }}
+  - -e
+  - GOARM={{- env.GOARM | default "" }}
+  - -e
+  - GOMIPS={{- env.GOMIPS | default "" }}
+  - -e
+  - GOMIPS64={{- env.GOMIPS64 | default "" }}
+  - -e
+  - GOWASM={{- env.GOWASM | default "" }}
+  - -e
+  - GOPPC64={{- env.GOPPC64 | default "" }}
+
+    {{- if env.CGO_CFLAGS_ALLOW }}
+  - -e
+  - CGO_CFLAGS_ALLOW={{- env.CGO_CFLAGS_ALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CFLAGS_DISALLOW }}
+  - -e
+  - CGO_CFLAGS_DISALLOW={{- env.CGO_CFLAGS_DISALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CPPFLAGS }}
+  - -e
+  - CGO_CPPFLAGS={{- env.CGO_CPPFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CFLAGS }}
+  - -e
+  - CGO_CFLAGS={{- env.CGO_CFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CXXFLAGS }}
+  - -e
+  - CGO_CXXFLAGS={{- env.CGO_CXXFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_FFLAGS }}
+  - -e
+  - CGO_FFLAGS={{- env.CGO_FFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_LDFLAGS }}
+  - -e
+  - CGO_LDFLAGS={{- env.CGO_LDFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CC }}
+  - -e
+  - CC={{- env.CC | default "" }}
+    {{- end }}
+
+    {{- if env.CXX }}
+  - -e
+  - CXX={{- env.CXX | default "" }}
+    {{- end }}
+
+    {{- if env.AR }}
+  - -e
+  - AR={{- env.AR | default "" }}
+    {{- end }}
+
+  - -e
+  - GONOSUMDB={{- env.GONOSUMDB | default "" }}
+  - -e
+  - GONOPROXY={{- env.GONOPROXY | default "" }}
+  - --entrypoint
+  - ""
+  - {{ $image }}
+  - go

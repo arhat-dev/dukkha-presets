@@ -1,0 +1,49 @@
+# Required env:
+# Required matrix vectors: pkg
+# Required hooks:
+# hooks:
+#   before:
+#   - shell: mkdir -p ${PROFILE_DIR}
+  # after:success:
+  # - shell: go tool pprof ${PROFILE_DIR}/mem.out
+
+path@template: ./{{- matrix.pkg -}}
+json_output_file@template: |-
+  {{- env.PROFILE_DIR -}}/result-{{ matrix.pkg | strings.KebabCase }}.json
+
+verbose: true
+panic_on_exit_0: true
+
+profile:
+  output_dir@env: ${PROFILE_DIR}
+  coverage:
+    enabled: true
+    output@template: |-
+      coverage.{{ matrix.pkg | strings.KebabCase }}.txt
+    packages@:
+    - __@template: ./{{- matrix.pkg -}}
+
+  memory:
+    enabled: true
+    output@template: |-
+      memory.{{ matrix.pkg | strings.KebabCase }}.out
+
+  cpu:
+    enabled: true
+    output@template: |-
+      cpu.{{ matrix.pkg | strings.KebabCase }}.out
+
+  mutex:
+    enabled: true
+    output@template: |-
+      mutex.{{ matrix.pkg | strings.KebabCase }}.out
+
+  block:
+    enabled: true
+    output@template: |-
+      block.{{ matrix.pkg | strings.KebabCase }}.out
+
+  trace:
+    enabled: true
+    output@template: |-
+      trace.{{ matrix.pkg | strings.KebabCase }}.out

@@ -1,26 +1,120 @@
-global:
-  env:
-  - name: GO_MODULE_NAME
-    value: arhat.dev/dukkha-preset
-  - name: GOLANG_APP_NAME
-    value: dukkha-preset
-
+# This is the sample config to use golang recipes
 renderers:
-  http:
-    enable_cache: true
-    cache_max_age: 5s
+  env:
+    enable_exec: true
 
 tools:
-  golang@echo!:
-    value:
-    - name: local
-    merge:
-    - data@file: golang/tool-in-docker.yml
+  golang:
+  - name: local
+    env:
+    - name: GO_VERSION
+      value@template: |-
+        {{- $parts := eval.Shell "go version" | strings.Split " " -}}
+        {{- $parts = index $parts 2 | trimPrefix "go" | strings.Split "." -}}
+        {{- index $parts 0 -}}.{{- index $parts 1 -}}
 
-golang:build@file!:
-  value: golang/build/app-nocgo.yml
-  patches:
-  - { op: add, path: /0/name, value@env: "${GOLANG_APP_NAME}" }
-  # following values are only meant for testing
-  - { op: add, path: /0/chdir, value: ./golang/testdata }
-  - { op: replace, path: /0/path@env, value: ./ }
+  - name: in-ctr
+    env:
+    # - name: lima_instance
+    #   value@file|template: templates/get-first-active-lima-instance.tpl
+    # - name: DOCKER_CLI
+    #   value@env: ${DOCKER_CLI:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
+    - name: VOLUME
+      value: dukkha-preset
+    - name: GO_VERSION
+      value: "1.17"
+    # - name: IMAGE_FLAVOR
+    #   value: debian-cross
+    - name: WORKING_DIR
+      value@template: |-
+        {{- filepath.Join env.DUKKHA_WORKING_DIR "golang" "testdata" -}}
+
+    __@file: golang/tool-in-ctr.yml
+
+# we are using virtual key for task (which is a inline map in dukkha)
+# so there should be a rendering suffix `@` note, but does nothing
+golang:build:
+# define task name
+- name: dukkha-preset
+  # set env required by golang/build/app-nocgo.yml
+  env:
+  - name: MODULE_NAME
+    value: arhat.dev/dukkha-preset
+  # set matrix vectors (cmd, kernel, arch), as required by golang/build/app-nocgo.yml
+  matrix@:
+    cmd:
+    - dukkha-preset
+    - foo
+    __@!:
+      value@template|file: |-
+        golang/matrix/{{- env.GO_VERSION -}}/common.yml
+      select: |-
+        .include.[].cmd = ["dukkha-preset", "foo"]
+  cgo:
+    enabled: true
+  chdir: golang/testdata
+  __@file: golang/build/app-nocgo.yml
+
+golang:test:
+- name: dukkha-preset-pkg
+  env:
+  - name: PROFILE_DIR
+    value: golang/testdata/build/test-profile
+  matrix:
+    pkg@template: |-
+      {{-
+        eval.Shell "cd golang/testdata && go list ./pkg/..."
+        | removePrefix
+          (eval.Shell "cd golang/testdata && go list -m" | trimSuffix "\n")
+        | addPrefix "- "
+      -}}
+  hooks:
+    before:
+    - shell@env: mkdir -p ${PROFILE_DIR}
+
+  chdir: golang/testdata
+  __@file: golang/test/pkg.yml
+
+workflow:run:
+- name: test-golang
+  env:
+  - name: PRESET
+    value: golang
+  jobs:
+  - task: golang:build(dukkha-preset, {})
+  - shell: &inspect_build_artifacts |-
+      ls -alh golang/testdata/build || true
+      rm -rf golang/testdata/build || true
+
+  - name: golang:in-ctr:build
+    task: |-
+      golang:in-ctr:build(dukkha-preset, { kernel: [linux] })
+    next@template: |-
+      {{- if not values.golang.in_ctr.done -}}
+        golang:in-ctr:build
+      {{- end -}}
+    env: &ctr_env
+    - name: lima_instance
+      value@file|template: templates/get-first-active-lima-instance.tpl
+    - name: IMAGE_FLAVOR
+      value: native
+    - name: DOCKER_CLI
+      value@file|shell: templates/enumerate-docker-cli.sh
+
+  - shell: *inspect_build_artifacts
+
+  - task: golang:test(dukkha-preset-pkg, {})
+  - shell: &inspect_test_profile |-
+      ls -alh golang/testdata/build/test-profile
+      rm -rf golang/testdata/build/test-profile
+
+  - name: golang:in-ctr:test
+    task: |-
+      golang:in-ctr:test(dukkha-preset-pkg, {})
+    next@template: |-
+      {{- if not values.golang.in_ctr.done -}}
+        golang:in-ctr:test
+      {{- end -}}
+    env: *ctr_env
+
+  - shell: *inspect_test_profile

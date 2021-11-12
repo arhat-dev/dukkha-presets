@@ -1,0 +1,9 @@
+run:
+  script@template: |-
+    #!/bin/sh
+
+    set -eux
+
+    dukkha run golang local build "{{ env.APP }}" \
+      -m "kernel={{ matrix.kernel }}" \
+      -m "arch={{ matrix.arch }}"

@@ -1,0 +1,4 @@
+kernel:
+- aix
+arch:
+- ppc64

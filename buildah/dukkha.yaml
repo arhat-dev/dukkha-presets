@@ -1,0 +1,85 @@
+renderers:
+  http:
+    enable_cache: true
+    cache_max_age: 5s
+
+tools:
+  buildah:
+  - name: local
+  - name: in-ctr
+    env:
+    # - name: lima_instance
+    #   value@file|template: templates/get-first-active-lima-instance.tpl
+    # - name: DOCKER_CLI
+    #   value@env: ${DOCKER_CLI:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
+    - name: VOLUME_NAME
+      value: buildah-dukkha-preset
+    - name: WORKING_DIR
+      value:
+    # - name: IMAGE
+    #   value: quay.io/containers/buildah:v1.23.1
+    __@file: buildah/tool-in-ctr.yml
+
+buildah:xbuild:
+- name: dukkha-preset
+  env:
+  - name: APP
+    value: dukkha-preset
+  - name: SOURCE_URL
+    value: https://github.com/arhat-dev/dukkha-preset
+  # - name: BUILDER_FLAVOR
+  #   value: debian-cross
+  matrix@file: templates/matrix/linux-all.yml
+  image_names:
+  - image: ghcr.io/arhat-dev/dukkha-pressets
+    manifest: ghcr.io/arhat-dev/dukkha-pressets
+  steps@:
+  - id: builder
+    from@file: buildah/xbuild/golang/builder.yml
+  - __@file: buildah/xbuild/copy-all-to-app.yml
+  - __@file: buildah/xbuild/golang/run-dukkha-build.yml
+  - run:
+      script: |-
+        #!/bin/sh
+
+        pwd
+        find /app
+
+  - from:
+      ref: scratch
+  - copy:
+      from:
+        step:
+          id: builder
+          path@template: |-
+            /app/golang/testdata/build/
+            {{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}
+            /
+      to:
+        path: /
+  - set:
+      labels@file: buildah/xbuild/image-labels.yml
+      env:
+      - name: PATH
+        value: /
+      entrypoint: []
+
+workflow:run:
+- name: test-buildah
+  env:
+  - name: PRESET
+    value: buildah
+  jobs:
+  - name: buildah:in-ctr:xbuild
+    task: buildah:in-ctr:xbuild(dukkha-preset, {})
+    next@template: |-
+      {{- if not values.buildah.in_ctr.done -}}
+        buildah:in-ctr:xbuild
+      {{- end -}}
+    env:
+    - name: BUILDER_FLAVOR
+      value: debian-cross
+    - name: lima_instance
+      value@file|template: templates/get-first-active-lima-instance.tpl
+    - name: DOCKER_CLI
+      value@file|shell: templates/enumerate-docker-cli.sh
