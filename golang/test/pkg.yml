@@ -1,4 +1,4 @@
-# Required env:
+# Required env: PROFILE_DIR
 # Required matrix vectors: pkg
 # Required hooks:
 # hooks:
@@ -9,7 +9,11 @@
 
 path@template: ./{{- matrix.pkg -}}
 json_output_file@template: |-
-  {{- env.PROFILE_DIR -}}/result-{{ matrix.pkg | strings.KebabCase }}.json
+  {{- if matrix.pkg -}}
+    {{- env.PROFILE_DIR -}}/result-{{ matrix.pkg | strings.KebabCase }}.json
+  {{- else -}}
+    {{- env.PROFILE_DIR -}}/result.json
+  {{- end -}}
 
 verbose: true
 panic_on_exit_0: true
@@ -19,31 +23,55 @@ profile:
   coverage:
     enabled: true
     output@template: |-
-      coverage.{{ matrix.pkg | strings.KebabCase }}.txt
+      {{- if matrix.pkg -}}
+        coverage.{{ matrix.pkg | strings.KebabCase }}.txt
+      {{- else -}}
+        coverage.txt
+      {{- end -}}
     packages@:
     - __@template: ./{{- matrix.pkg -}}
 
   memory:
     enabled: true
     output@template: |-
-      memory.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- if matrix.pkg -}}
+        memory.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- else -}}
+        memory.out
+      {{- end -}}
 
   cpu:
     enabled: true
     output@template: |-
-      cpu.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- if matrix.pkg -}}
+        cpu.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- else -}}
+        cpu.out
+      {{- end -}}
 
   mutex:
     enabled: true
     output@template: |-
-      mutex.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- if matrix.pkg -}}
+        mutex.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- else -}}
+        mutex.out
+      {{- end -}}
 
   block:
     enabled: true
     output@template: |-
-      block.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- if matrix.pkg -}}
+        block.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- else -}}
+        block.out
+      {{- end -}}
 
   trace:
     enabled: true
     output@template: |-
-      trace.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- if matrix.pkg -}}
+        trace.{{ matrix.pkg | strings.KebabCase }}.out
+      {{- else -}}
+        trace.out
+      {{- end -}}

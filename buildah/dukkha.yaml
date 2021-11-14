@@ -29,7 +29,10 @@ buildah:xbuild:
     value: https://github.com/arhat-dev/dukkha-preset
   # - name: BUILDER_FLAVOR
   #   value: debian-cross
-  matrix@file: templates/matrix/linux-all.yml
+  matrix:
+    kernel:
+    - linux
+    arch@file: matrix/container/linux/all.yml
   image_names:
   - image: ghcr.io/arhat-dev/dukkha-pressets
     manifest: ghcr.io/arhat-dev/dukkha-pressets

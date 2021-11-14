@@ -5,12 +5,12 @@ kernel:
 - netbsd
 - openbsd
 arch:
-- x86
 - arm64
 - amd64
 - armv7
 - armv6
 - armv5
+- x86
 
 include:
 - kernel:
@@ -33,15 +33,15 @@ include:
 - kernel:
   - linux
   arch:
-  - mips
-  - mipssf
-  - mipsle
-  - mipslesf
-  - mips64
-  - mips64sf
+  - riscv64
+  - s390x
   - mips64le
   - mips64lesf
-  - ppc64
+  - mips64
+  - mips64sf
+  - mipsle
+  - mipslesf
+  - mips
+  - mipssf
   - ppc64le
-  - s390x
-  - riscv64
+  - ppc64

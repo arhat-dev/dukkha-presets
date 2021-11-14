@@ -15,8 +15,6 @@ workflow:run:
   matrix:
     preset:
     - golang
-    # TODO: fix upstream image build and enable this
-    #       https://github.com/arhat-dev/dockerfile/issues/74
-    # - buildah
+    - buildah
   jobs:
   - task@template: workflow:run(test-{{ matrix.preset }}, {})

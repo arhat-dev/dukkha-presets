@@ -1,9 +1,11 @@
+# Build executables `${OUTPUT_DIR}/{{ matrix.cmd }}.{{ matrix.kernel }}.{{ matrix.arch }}`
+# from ./cmd/{{ matrix.cmd }}
+
 # Required Env: MODULE_NAME
-# Required extra matrix vector name: cmd, kernel, arch
+# Required matrix vector names: cmd, kernel, arch
+# Optional Env: OUTPUT_DIR
 
 path@template: ./cmd/{{- matrix.cmd -}}
-cgo:
-  enabled: false
 tags:
 - netgo
 - osusergo
@@ -16,6 +18,7 @@ ldflags@template:
 - -X "{{- env.MODULE_NAME -}}/pkg/version.tag={{- env.GIT_TAG -}}"
 - -X "{{- env.MODULE_NAME -}}/pkg/version.arch={{- matrix.arch -}}"
 - -X "{{- env.MODULE_NAME -}}/pkg/version.workspaceClean={{- env.GIT_WORKTREE_CLEAN -}}"
+- -X "{{- env.MODULE_NAME -}}/pkg/version.buildTime={{ now.UTC.Format "2006-01-02T15:04:05Z07:00" }}"
 # TODO
 # - -X "{{- env.MODULE_NAME -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
 
@@ -25,10 +28,12 @@ outputs@template: |-
     {{- $suffix = ".exe" -}}
   {{- end -}}
 
+  {{- $output_dir := env.OUTPUT_DIR | default "build" -}}
+
   {{- if and (eq matrix.kernel env.HOST_KERNEL) (eq matrix.arch env.HOST_ARCH) }}
-  - build/{{- matrix.cmd -}}{{- $suffix -}}
+  - {{ filepath.Join $output_dir (printf "%s%s" matrix.cmd $suffix) }}
   {{- end }}
-  - build/{{- matrix.cmd -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}{{- $suffix -}}
+  - {{ filepath.Join $output_dir (printf "%s.%s.%s%s" matrix.cmd matrix.kernel matrix.arch $suffix) }}
 
 extra_args:
 - -buildmode=exe

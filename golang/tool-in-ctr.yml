@@ -118,13 +118,26 @@ cmd@template: |-
   - -v
   - {{ env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR }}
 
-  # always use gomod
-  - -e
-  - GO111MODULE=on
+  {{- /* start of go language specific settings */}}
 
     {{- if env.GOFLAGS }}
   - -e
   - GOFLAGS={{- env.GOFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.GIT_ALLOW_PROTOCOL }}
+  - -e
+  - GIT_ALLOW_PROTOCOL={{- env.GIT_ALLOW_PROTOCOL | default "" }}
+    {{- end }}
+
+    {{- if env.GO_EXTLINK_ENABLED }}
+  - -e
+  - GO_EXTLINK_ENABLED={{- env.GO_EXTLINK_ENABLED | default "" }}
+    {{- end }}
+
+    {{- if env.GOGCCFLAGS }}
+  - -e
+  - GOGCCFLAGS={{- env.GOGCCFLAGS | default "" }}
     {{- end }}
 
     {{- if env.GOEXPERIMENT }}
@@ -137,14 +150,27 @@ cmd@template: |-
   - GOEXE={{- env.GOEXE | default "" }}
     {{- end }}
 
-    {{- if env.CGO_ENABLED }}
+  {{- /* end of go language specific settings */}}
+
+  {{- /* start of go module related settings */}}
+
+  # always use gomod
   - -e
-  - CGO_ENABLED={{- env.CGO_ENABLED | default "0" }}
+  - GO111MODULE=on
+
+    {{- if env.GOINSECURE }}
+  - -e
+  - GOINSECURE={{- env.GOINSECURE | default "" }}
     {{- end }}
 
-    {{- if env.GO_PROXY }}
+    {{- if env.GOINSECURE }}
   - -e
-  - GO_PROXY={{- env.GO_PROXY | default "" }}
+  - GOPRIVATE={{- env.GOPRIVATE | default "" }}
+    {{- end }}
+
+    {{- if env.GOPROXY }}
+  - -e
+  - GOPROXY={{- env.GOPROXY | default "" }}
     {{- end }}
 
     {{- if env.GOSUMDB }}
@@ -152,57 +178,64 @@ cmd@template: |-
   - GOSUMDB={{- env.GOSUMDB | default "" }}
     {{- end }}
 
+    {{- if env.GONOSUMDB }}
+  - -e
+  - GONOSUMDB={{- env.GONOSUMDB | default "" }}
+    {{- end }}
+
+    {{- if env.GONOPROXY }}
+  - -e
+  - GONOPROXY={{- env.GONOPROXY | default "" }}
+    {{- end }}
+
+  {{- /* end of go module proxy related settings */}}
+
+  {{- /* start of GOOS/GOARCH related settings */}}
+
+  # always set GOOS and GOARCH
   - -e
   - GOOS={{- env.GOOS | default "" }}
   - -e
   - GOARCH={{- env.GOARCH | default "" }}
+
+    {{- if or (eq env.GOOS "386") env.GO386 }}
   - -e
   - GO386={{- env.GO386 | default "" }}
+    {{- end }}
+
+    {{- if or (eq env.GOOS "amd64") env.GOAMD64 }}
+  - -e
+  - GOAMD64={{- env.GOAMD64 | default "" }}
+    {{- end }}
+
+    {{- if or (eq env.GOOS "arm") env.GOARM }}
   - -e
   - GOARM={{- env.GOARM | default "" }}
+    {{- end }}
+
+    {{- if or (eq env.GOOS "mips" "mipsle") env.GOMIPS }}
   - -e
   - GOMIPS={{- env.GOMIPS | default "" }}
+    {{- end }}
+
+    {{- if or (eq env.GOOS "mips64" "mips64le") env.GOMIPS64 }}
   - -e
   - GOMIPS64={{- env.GOMIPS64 | default "" }}
+    {{- end }}
+
+    {{- if or (eq env.GOOS "js") env.GOWASM }}
   - -e
   - GOWASM={{- env.GOWASM | default "" }}
+    {{- end }}
+
+    {{- if or (eq env.GOOS "ppc64" "ppc64le") env.GOPPC64 }}
   - -e
   - GOPPC64={{- env.GOPPC64 | default "" }}
-
-    {{- if env.CGO_CFLAGS_ALLOW }}
-  - -e
-  - CGO_CFLAGS_ALLOW={{- env.CGO_CFLAGS_ALLOW | default "" }}
     {{- end }}
 
-    {{- if env.CGO_CFLAGS_DISALLOW }}
-  - -e
-  - CGO_CFLAGS_DISALLOW={{- env.CGO_CFLAGS_DISALLOW | default "" }}
-    {{- end }}
+  {{- /* end of GOOS & GOARCH related settings */}}
 
-    {{- if env.CGO_CPPFLAGS }}
-  - -e
-  - CGO_CPPFLAGS={{- env.CGO_CPPFLAGS | default "" }}
-    {{- end }}
-
-    {{- if env.CGO_CFLAGS }}
-  - -e
-  - CGO_CFLAGS={{- env.CGO_CFLAGS | default "" }}
-    {{- end }}
-
-    {{- if env.CGO_CXXFLAGS }}
-  - -e
-  - CGO_CXXFLAGS={{- env.CGO_CXXFLAGS | default "" }}
-    {{- end }}
-
-    {{- if env.CGO_FFLAGS }}
-  - -e
-  - CGO_FFLAGS={{- env.CGO_FFLAGS | default "" }}
-    {{- end }}
-
-    {{- if env.CGO_LDFLAGS }}
-  - -e
-  - CGO_LDFLAGS={{- env.CGO_LDFLAGS | default "" }}
-    {{- end }}
+  {{- /* start of cgo related settings */}}
 
     {{- if env.CC }}
   - -e
@@ -219,10 +252,98 @@ cmd@template: |-
   - AR={{- env.AR | default "" }}
     {{- end }}
 
+    {{- if env.FC }}
   - -e
-  - GONOSUMDB={{- env.GONOSUMDB | default "" }}
+  - FC={{- env.FC | default "" }}
+    {{- end }}
+
+    {{- if env.PKG_CONFIG }}
   - -e
-  - GONOPROXY={{- env.GONOPROXY | default "" }}
+  - PKG_CONFIG={{- env.PKG_CONFIG | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_ENABLED }}
+  - -e
+  - CGO_ENABLED={{- env.CGO_ENABLED | default "0" }}
+    {{- end }}
+
+    {{- if env.CGO_CPPFLAGS_ALLOW }}
+  - -e
+  - CGO_CPPFLAGS_ALLOW={{- env.CGO_CPPFLAGS_ALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CPPFLAGS_DISALLOW }}
+  - -e
+  - CGO_CPPFLAGS_DISALLOW={{- env.CGO_CPPFLAGS_DISALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CPPFLAGS }}
+  - -e
+  - CGO_CPPFLAGS={{- env.CGO_CPPFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CFLAGS_ALLOW }}
+  - -e
+  - CGO_CFLAGS_ALLOW={{- env.CGO_CFLAGS_ALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CFLAGS_DISALLOW }}
+  - -e
+  - CGO_CFLAGS_DISALLOW={{- env.CGO_CFLAGS_DISALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CFLAGS }}
+  - -e
+  - CGO_CFLAGS={{- env.CGO_CFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CXXFLAGS_ALLOW }}
+  - -e
+  - CGO_CXXFLAGS_ALLOW={{- env.CGO_CXXFLAGS_ALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CXXFLAGS_DISALLOW }}
+  - -e
+  - CGO_CXXFLAGS_DISALLOW={{- env.CGO_CXXFLAGS_DISALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_CXXFLAGS }}
+  - -e
+  - CGO_CXXFLAGS={{- env.CGO_CXXFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_FFLAGS_ALLOW }}
+  - -e
+  - CGO_FFLAGS_ALLOW={{- env.CGO_FFLAGS_ALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_FFLAGS_DISALLOW }}
+  - -e
+  - CGO_FFLAGS_DISALLOW={{- env.CGO_FFLAGS_DISALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_FFLAGS }}
+  - -e
+  - CGO_FFLAGS={{- env.CGO_FFLAGS | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_LDLAGS_ALLOW }}
+  - -e
+  - CGO_LDLAGS_ALLOW={{- env.CGO_LDLAGS_ALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_LDLAGS_DISALLOW }}
+  - -e
+  - CGO_LDLAGS_DISALLOW={{- env.CGO_LDLAGS_DISALLOW | default "" }}
+    {{- end }}
+
+    {{- if env.CGO_LDLAGS }}
+  - -e
+  - CGO_LDLAGS={{- env.CGO_LDLAGS | default "" }}
+    {{- end }}
+
+  {{- /* end of cgo related settings */}}
+
   - --entrypoint
   - ""
   - {{ $image }}
