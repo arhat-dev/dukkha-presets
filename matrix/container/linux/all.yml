@@ -1,3 +1,5 @@
+# all supported cpu archs for linux container
+
 - arm64
 - amd64
 - armv7

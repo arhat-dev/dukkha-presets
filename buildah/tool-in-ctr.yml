@@ -1,15 +1,13 @@
 # Optional env:
-#   - DOCKER_CLI the docker cli compatible command for running container
+#   - RUN_CONTAINER the docker cli compatible command for running container
 #   - VOLUME_NAME for caching go modules in container
 #   - WORKING_DIR for switching to different golang project
 #   - IMAGE to override defualt official buildah image
 
-use_shell: false
-shell_name: ""
 cmd@template: |-
-  {{- $docker_cli := values.tools.docker_cli }}
+  {{- $docker_cli := values.cmd.run_container }}
   {{- if not $docker_cli -}}
-    {{- $docker_cli = strings.Split " " (default "docker run -t" env.DOCKER_CLI) -}}
+    {{- $docker_cli = strings.Split " " (default "docker run -t" env.RUN_CONTAINER) -}}
   {{- end }}
   {{- range $_, $v := $docker_cli }}
     {{- if $v }}

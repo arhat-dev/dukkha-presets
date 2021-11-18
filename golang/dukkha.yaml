@@ -17,8 +17,8 @@ tools:
     env:
     # - name: lima_instance
     #   value@file|template: templates/get-first-active-lima-instance.tpl
-    # - name: DOCKER_CLI
-    #   value@env: ${DOCKER_CLI:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
+    # - name: RUN_CONTAINER
+    #   value@env: ${RUN_CONTAINER:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
     - name: VOLUME
       value: dukkha-preset
     - name: GO_VERSION
@@ -97,7 +97,7 @@ workflow:run:
       value@file|template: templates/get-first-active-lima-instance.tpl
     - name: IMAGE_FLAVOR
       value: native
-    - name: DOCKER_CLI
+    - name: RUN_CONTAINER
       value@file|shell: templates/enumerate-docker-cli.sh
 
   - shell: *inspect_build_artifacts

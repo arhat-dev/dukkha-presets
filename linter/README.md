@@ -1,26 +1,9 @@
-include:
-- buildah/dukkha.yaml
-- golang/dukkha.yaml
-- linter/dukkha.yaml
+# Linter Presets
 
-tools:
-  workflow:
-  - name: local
+## Usage
 
-renderers:
-  env:
-    enable_exec: true
-
+```yaml
 workflow:run:
-- name: test
-  matrix:
-    preset:
-    - golang
-    - buildah
-    - linter
-  jobs:
-  - task@template: workflow:run(test-{{ matrix.preset }}, {})
-
 - name: lint
   matrix:
     include:
@@ -29,10 +12,10 @@ workflow:run:
       # workdir: [""]
       # config: [".ecrc"]
 
-    # TODO
     - linter: [shellcheck]
       # version: [""]
       # workdir: [""]
+
 
     - linter: [yamllint]
       # version: ["1.26"]
@@ -45,15 +28,16 @@ workflow:run:
       # config: [""]
       # pkgs: ["./..."]
 
-      workdir@template: |-
-        - {{ filepath.Join env.DUKKHA_WORKING_DIR "golang/testdata" -}}
-      config: ["../../linter/testdata/golangci-lint.yml"]
-
   jobs:
-  - shell@template|file|template: |-
-      linter/{{- matrix.linter -}}.tpl
+  - shell@template|http|template: |-
+      https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master/linter/{{ matrix.linter }}.tpl
     env:
     - name@template: |-
         {{- matrix.linter | strings.SnakeCase | strings.ToUpper -}}
       value@template: |-
         {{- matrix.version | default "" -}}
+```
+
+## Add new linter
+
+- Use `env.MATRIX_XXX` to make matrix info available for testing (as `{{ matrix.xxx }}` cannot survive command run for dukkhe render)

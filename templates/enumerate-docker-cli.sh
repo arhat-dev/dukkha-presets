@@ -11,7 +11,7 @@ mark_todo() {
 }
 
 set_cli() {
-  template:dukkha.SetValue "\"tools.docker_cli\"" "\"[$1]\"" >/dev/null 2>&1
+  template:dukkha.SetValue "\"cmd.run_container\"" "\"[$1]\"" >/dev/null 2>&1
 }
 
 key="Values.${PRESET}.in_ctr.podman"

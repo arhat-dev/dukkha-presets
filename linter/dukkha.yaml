@@ -1,0 +1,41 @@
+workflow:run:
+- name: test-linter
+  matrix:
+    linter@template: |-
+      {{- $matches := filepath.Glob "linter/*.tpl" -}}
+      {{- range $_, $f := $matches }}
+      - {{ filepath.Base $f | strings.TrimSuffix ".tpl" }}
+      {{- end }}
+    workdir:
+    - ""
+    - TEST_WORKDIR
+    version:
+    - ""
+    - TEST_VERSION
+    config:
+    - ""
+    - TEST_CONFIG
+  jobs:
+  - name: in-container
+    env:
+    - &env_ver
+      name@template: |-
+        {{- matrix.linter | strings.SnakeCase | strings.ToUpper -}}_VERSION
+      value@template: |-
+        {{- matrix.version -}}
+    # make sure only dukkha available, so we MUST run in container
+    - name: PATH
+      value@template: |-
+        {{- filepath.Dir (eval.Shell "command -v dukkha") -}}
+
+    shell@template?str: &render |-
+      {{- $file := filepath.Join "linter" (printf "%s.tpl" matrix.linter) -}}
+      echo "__@file|template: {{ $file }}" | dukkha render
+
+  - name: local
+    env:
+    - *env_ver
+    - name: PATH
+      value@template: |-
+        {{- filepath.Join env.DUKKHA_WORKING_DIR "linter" "testdata" "bin" -}}:{{ env.PATH }}
+    shell@template?str: *render

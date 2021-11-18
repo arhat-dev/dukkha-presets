@@ -1,29 +1,37 @@
+# Optional global values:
+#   - cmd.run_container: an array of strings representing equivalent cli command as `docker run`
+#
+# Optional matrix vectors:
+#   - go_version: golang toolchain version
+#
 # Optional env:
-#   - DOCKER_CLI the docker cli compatible command for running container
-#   - VOLUME_NAME for caching go modules in container
-#   - WORKING_DIR for switching to different golang project
+#   - GO_VERSION: same as matrix.go_version, but as a fallback, if not set, use go1.17
+#   - RUN_CONTAINER: same as `cmd.run_container`, but in space separated cmd list env value form
+#                    will be used when `cmd.run_container` is empty or not defined
+#
+#   - VOLUME_NAME: name of docker volume or absolute local path for caching go modules in container `/go/pkg/mod`
+#   - WORKING_DIR: for switching to directory different from DUKKHA_WORKING_DIR
 #   - IMAGE to override default golang image
 #   - IMAGE_FLAVOR set which type of golang image to use, only effective when IMAGE is not set
-#                  possible values:
-#                  - native (alias of alpine-native)
-#                  - alpine-native (default, use same arch image as host arch, no cross gcc toolchain, alpine based)
-#                  - debian-navive (same as alpine-native, but based on debian)
+#       possible values:
+#        - native (alias of alpine-native)
+#        - alpine-native (default, use same arch image as host arch, no cross gcc toolchain, alpine based)
+#        - debian-navive (same as alpine-native, but based on debian)
 #
-#                  - cross (alias of alpine-cross)
-#                  - alpine-cross (use same arch image as host arch, with cross gcc, alpine based
-#                                  when matrix.arch is not supported by alpine, automatically use debian based image
-#                                  if no cross toolchain for host_arch, fallback to qemu mode
-#                  - debian-cross (same as alpine-cross, but debian based)
+#        - cross (alias of alpine-cross)
+#        - alpine-cross (use same arch image as host arch, with cross gcc, alpine based
+#             when matrix.arch is not supported by alpine, automatically use debian based image
+#             if no cross toolchain for host_arch, fallback to qemu mode
+#        - debian-cross (same as alpine-cross, but debian based)
 #
-#                  - qemu (alias of alpine-qemu)
-#                  - alpine-qemu (use target matrix.arch image, should have qemu-static configured in host)
-#                                 when matrix.arch is not supported by alpine, automatically use debian based image
-#                  - debian-qemu (same as alpine-qemu, but debian based)
-use_shell: false
-shell_name: ""
+#        - qemu (alias of alpine-qemu)
+#        - alpine-qemu (use target matrix.arch image, should have qemu-static configured in host)
+#             when matrix.arch is not supported by alpine, automatically use debian based image
+#        - debian-qemu (same as alpine-qemu, but debian based)
+
 cmd@template: |-
   {{- $flavor := env.IMAGE_FLAVOR | default "native" -}}
-  {{- $ver := env.GO_VERSION | default "1.17" -}}
+  {{- $ver := matrix.go_version | default env.GO_VERSION | default "1.17" -}}
   {{- $arch := trimSuffix "sf" (default env.HOST_ARCH matrix.arch) -}}
   {{- $host_arch := trimSuffix "sf" (default "amd64" env.HOST_ARCH) -}}
   {{- $cgo := eq env.CGO_ENABLED "1" "true" -}}
@@ -100,11 +108,11 @@ cmd@template: |-
   {{- end -}}
 
   {{- $image := env.IMAGE | default (printf "ghcr.io/arhat-dev/builder-golang:%s" $tag) -}}
-  {{- $docker_cli := values.tools.docker_cli }}
-  {{- if not $docker_cli -}}
-    {{- $docker_cli = strings.Split " " (default "docker run -t" env.DOCKER_CLI) -}}
+  {{- $run_container := values.cmd.run_container }}
+  {{- if not $run_container -}}
+    {{- $run_container = strings.Split " " (default "docker run -t" env.RUN_CONTAINER) -}}
   {{- end }}
-  {{- range $_, $v := $docker_cli }}
+  {{- range $_, $v := $run_container }}
     {{- if $v }}
   - {{ $v }}
     {{- end }}
