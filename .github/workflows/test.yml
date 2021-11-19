@@ -4,6 +4,11 @@ name: test
 on:
   workflow_call:
     inputs:
+      os:
+        required: false
+        default: ubuntu-latest
+        type: string
+
       go-version:
         required: false
         default: "1.17.x"
@@ -18,7 +23,7 @@ defaults:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.os }}
     steps:
     - uses: actions/checkout@v2
       with:

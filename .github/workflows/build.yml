@@ -1,4 +1,4 @@
-name: image
+name: build
 
 # yamllint disable-line rule:truthy
 on:
@@ -14,18 +14,25 @@ on:
         default: "1.17.x"
         type: string
 
+      release:
+        required: true
+        description: |-
+          Create a new release
+
+        type: boolean
+        default: false
+
     secrets:
       token:
         description: |-
           github token
         required: true
 
-      # TODO: support cosign image signing in pipeline
       cosign-private-key:
-        required: false
+        required: true
 
       cosign-private-key-password:
-        required: false
+        required: true
 
 env:
   GO111MODULE: "on"
@@ -52,33 +59,25 @@ jobs:
         version: latest
         go-version: ${{ inputs.go-version }}
 
-    - name: Setup multi-arch support
-      uses: dbhi/qus/action@main
-
-    - name: Build images
+    - name: Build artifacts
       run: |-
-        dukkha run workflow local run build-images
+        dukkha run workflow local run build-artifacts
 
-    - name: Sign images
+    - name: Upload artifacts
       env:
+        # common user pass env for ghcr login
+        GHCR_USER: ${{ github.actor }}
+        GHCR_PASS: ${{ secrets.token }}
+        # common private key env for cosign
         COSIGN_PRIVATE_KEY: ${{ secrets.cosign-private-key }}
         COSIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.cosign-private-key-password }}
       run: |-
-        dukkha run workflow local run sign-images
+        dukkha run workflow local run upload-artifacts
 
-    - name: List podman images
-      if: always() && startsWith(inputs.os, 'ubuntu-')
-      run: |-
-        podman images
-
-    - name: List docker images
-      if: always() && (startsWith(inputs.os, 'ubuntu-') || startsWith(inputs.os, 'windows-'))
-      run: |-
-        docker images
-
-    - name: Push images
+    - name: Create Release
+      if: inputs.release
       env:
-        GHCR_USER: ${{ github.actor }}
-        GHCR_PASS: ${{ secrets.token }}
-      run: |-
-        dukkha run workflow local run push-images
+        # GH_TOKEN env is required by github cli (gh)
+        GH_TOKEN: ${{ secrets.token }}
+      run: |
+        dukkha run workflow local run release
