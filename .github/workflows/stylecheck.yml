@@ -1,0 +1,44 @@
+name: stylecheck
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        required: true
+        default: "1.17.x"
+
+env:
+  GO111MODULE: "on"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  stylecheck:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # disable shallow-clone
+        fetch-depth: 0
+
+    - name: Install dukkha
+      uses: arhat-dev/actions-setup-dukkha@master
+      with:
+        version: latest
+        go-version: ${{ inputs.go-version }}
+
+    - name: Ensure files tidy
+      run: |
+        dukkha run workflow local run tidy
+
+        if ! git diff --exit-code ; then
+          echo "project files not tidy"
+          exit 1
+        fi
+
+    - name: Lint
+      run: |
+        dukkha run workflow local run lint

@@ -1,0 +1,38 @@
+name: test
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        required: true
+        default: "1.17.x"
+
+env:
+  GO111MODULE: "on"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # disable shallow-clone
+        fetch-depth: 0
+
+    - name: Install dukkha
+      uses: arhat-dev/actions-setup-dukkha@master
+      with:
+        version: latest
+        go-version: ${{ inputs.go-version }}
+
+    - name: Setup multi-arch support
+      uses: dbhi/qus/action@main
+
+    - name: Test
+      run: |-
+        dukkha run workflow local run test
