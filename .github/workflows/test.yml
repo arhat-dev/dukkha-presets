@@ -4,15 +4,19 @@ name: test
 on:
   workflow_call:
     inputs:
-      os:
+      fail-fast:
         required: false
-        default: ubuntu-latest
-        type: string
+        type: boolean
+        default: false
 
-      go-version:
+      matrix:
         required: false
-        default: "1.17.x"
         type: string
+        default: |-
+          {
+            "os": ["ubuntu-latest"],
+            "go": ["1.17.x"]
+          }
 
       prepare:
         required: false
@@ -28,7 +32,10 @@ defaults:
 
 jobs:
   test:
-    runs-on: ${{ inputs.os }}
+    strategy:
+      fail-fast: ${{ inputs.fail-fast }}
+      matrix: ${{ fromJson(inputs.matrix) }}
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -39,7 +46,7 @@ jobs:
       uses: arhat-dev/actions-setup-dukkha@master
       with:
         version: latest
-        go-version: ${{ inputs.go-version }}
+        go-version: ${{ matrix.go }}
 
     - name: Setup multi-arch support
       uses: dbhi/qus/action@main
