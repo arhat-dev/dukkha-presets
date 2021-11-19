@@ -14,6 +14,11 @@ on:
         default: "1.17.x"
         type: string
 
+      prepare:
+        required: false
+        default: ""
+        type: string
+
 env:
   GO111MODULE: "on"
 
@@ -38,6 +43,10 @@ jobs:
 
     - name: Setup multi-arch support
       uses: dbhi/qus/action@main
+
+    - name: Prepare test
+      run: |-
+        ${{ inputs.prepare }}
 
     - name: Test
       run: |-

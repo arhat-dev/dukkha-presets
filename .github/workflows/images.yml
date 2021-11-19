@@ -1,4 +1,4 @@
-name: image
+name: images
 
 # yamllint disable-line rule:truthy
 on:
@@ -12,6 +12,11 @@ on:
       go-version:
         required: false
         default: "1.17.x"
+        type: string
+
+      prepare:
+        required: false
+        default: ""
         type: string
 
     secrets:
@@ -54,6 +59,10 @@ jobs:
 
     - name: Setup multi-arch support
       uses: dbhi/qus/action@main
+
+    - name: Prepare image build
+      run: |-
+        ${{ inputs.prepare }}
 
     - name: Build images
       run: |-

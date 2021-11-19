@@ -1,4 +1,4 @@
-name: build
+name: artifacts
 
 # yamllint disable-line rule:truthy
 on:
@@ -18,9 +18,13 @@ on:
         required: true
         description: |-
           Create a new release
-
         type: boolean
         default: false
+
+      prepare:
+        required: false
+        default: ""
+        type: string
 
     secrets:
       token:
@@ -59,9 +63,21 @@ jobs:
         version: latest
         go-version: ${{ inputs.go-version }}
 
+    - name: Prepare artifacts build
+      run: |-
+        ${{ inputs.prepare }}
+
     - name: Build artifacts
       run: |-
         dukkha run workflow local run build-artifacts
+
+    - name: Sign artifacts
+      env:
+        # common private key env for cosign
+        COSIGN_PRIVATE_KEY: ${{ secrets.cosign-private-key }}
+        COSIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.cosign-private-key-password }}
+      run: |-
+        dukkha run workflow local run sign-artifacts
 
     - name: Upload artifacts
       env:
@@ -80,4 +96,4 @@ jobs:
         # GH_TOKEN env is required by github cli (gh)
         GH_TOKEN: ${{ secrets.token }}
       run: |
-        dukkha run workflow local run release
+        dukkha run workflow local run create-release
