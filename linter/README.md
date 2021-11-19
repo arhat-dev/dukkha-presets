@@ -30,7 +30,7 @@ workflow:run:
 
   jobs:
   - shell@template|http|template: |-
-      https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master/linter/{{ matrix.linter }}.tpl
+      https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/linter/{{ matrix.linter }}.tpl
     env:
     - name@template: |-
         {{- matrix.linter | strings.SnakeCase | strings.ToUpper -}}

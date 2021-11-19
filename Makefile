@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include scripts/lint.mk
-
-.PHONY: test
+.PHONY: test lint
 test:
 	dukkha run workflow local run test
+
+lint:
+	dukkha run workflow local run lint

@@ -29,12 +29,17 @@
 
 {{- else -}}
 
-  {{- $cmd := env.RUN_CONTAINER -}}
-  {{- if values.cmd.run_container -}}
-    {{- $cmd = join values.cmd.run_container " " -}}
+  {{- $cmd := strings.Split "," "docker,run,--rm" -}}
+
+  {{- if env.RUN_CTR -}}
+    {{- $cmd = fromYaml env.RUN_CTR -}}
+  {{- else if values.cmd.run_container -}}
+    {{- $cmd = values.cmd.run_container -}}
   {{- end -}}
 
-  {{- $cmd | default "docker run --rm" }} \
+  {{- range $i, $v := $cmd -}}
+    {{- strings.ShellQuote $v | indent 1 -}}
+  {{- end }} \
     -v "{{- env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR -}}" \
     -w "{{- env.MATRIX_WORKDIR | default env.DUKKHA_WORKING_DIR -}}" \
     ghcr.io/arhat-dev/golangci-lint:{{- $version }} \

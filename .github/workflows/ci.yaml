@@ -31,7 +31,7 @@ jobs:
         go-version: 1.17.x
 
     - name: Lint
-      run: make lint.all
+      run: make lint
 
     - name: Test
       run: make test

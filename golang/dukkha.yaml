@@ -14,11 +14,12 @@ tools:
         {{- index $parts 0 -}}.{{- index $parts 1 -}}
 
   - name: in-ctr
+    cmd@file|template: golang/cmd-in-ctr.yml
     env:
     # - name: lima_instance
-    #   value@file|template: templates/get-first-active-lima-instance.tpl
-    # - name: RUN_CONTAINER
-    #   value@env: ${RUN_CONTAINER:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
+    #   value@file|template: templates/first-active-lima-instance.tpl
+    # - name: RUN_CTR
+    #   value@env: ${RUN_CTR:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
     - name: VOLUME
       value: dukkha-preset
     - name: GO_VERSION
@@ -28,8 +29,6 @@ tools:
     - name: WORKING_DIR
       value@template: |-
         {{- filepath.Join env.DUKKHA_WORKING_DIR "golang" "testdata" -}}
-
-    __@file: golang/tool-in-ctr.yml
 
 # we are using virtual key for task (which is a inline map in dukkha)
 # so there should be a rendering suffix `@` note, but does nothing
@@ -94,11 +93,11 @@ workflow:run:
       {{- end -}}
     env: &ctr_env
     - name: lima_instance
-      value@file|template: templates/get-first-active-lima-instance.tpl
+      value@file|template: templates/first-active-lima-instance.tpl
     - name: IMAGE_FLAVOR
       value: native
-    - name: RUN_CONTAINER
-      value@file|shell: templates/enumerate-docker-cli.sh
+    - name: RUN_CTR
+      value@file?str|shell?str: templates/enumerate-docker-cli.sh
 
   - shell: *inspect_build_artifacts
 

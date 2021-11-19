@@ -7,18 +7,18 @@ tools:
   buildah:
   - name: local
   - name: in-ctr
+    cmd@file|template: buildah/cmd-in-ctr.yml
     env:
     # - name: lima_instance
-    #   value@file|template: templates/get-first-active-lima-instance.tpl
-    # - name: RUN_CONTAINER
-    #   value@env: ${RUN_CONTAINER:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
+    #   value@file|template: templates/first-active-lima-instance.tpl
+    # - name: RUN_CTR
+    #   value@env: ${RUN_CTR:-"limactl shell ${lima_instance} sudo nerdctl run --rm --privileged"}
     - name: VOLUME_NAME
       value: buildah-dukkha-preset
     - name: WORKING_DIR
       value:
     # - name: IMAGE
     #   value: quay.io/containers/buildah:v1.23.1
-    __@file: buildah/tool-in-ctr.yml
 
 buildah:xbuild:
 - name: dukkha-preset
@@ -83,6 +83,6 @@ workflow:run:
     - name: BUILDER_FLAVOR
       value: debian-cross
     - name: lima_instance
-      value@file|template: templates/get-first-active-lima-instance.tpl
-    - name: RUN_CONTAINER
-      value@file|shell: templates/enumerate-docker-cli.sh
+      value@file|template: templates/first-active-lima-instance.tpl
+    - name: RUN_CTR
+      value@file?str|shell?str: templates/enumerate-docker-cli.sh

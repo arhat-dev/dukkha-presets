@@ -4,6 +4,10 @@
 
 Shared `dukkha` config recipes for `arhat-dev`
 
+## Convensions
+
+1. Use global value `cmd.run_container` (string array) to run containerized commands in `docker run` style, use `RUN_CTR` env to override.
+
 ## LICENSE
 
 ```txt

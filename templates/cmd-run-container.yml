@@ -1,0 +1,70 @@
+# Usage:
+#   global:
+#     values:
+#       cmd:
+#         run_container@http|template: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/templates/cmd-run-container.yml
+#
+# Find first local tool to run container
+
+{{- if strings.TrimSpace (eval.Shell "command -v podman 2>/dev/null || true") -}}
+
+{{- if env.RUN_CTR_PRIVILEGED }}
+- sudo
+{{- end }}
+- podman
+- run
+- --rm
+{{- if env.RUN_CTR_PRIVILEGED }}
+- --privileged
+{{- end }}
+
+{{- else if strings.TrimSpace (eval.Shell "command -v nerdctl 2>/dev/null || true") }}
+
+{{- if env.RUN_CTR_PRIVILEGED }}
+- sudo
+{{- end }}
+- nerdctl
+- run
+- --rm
+{{- if env.RUN_CTR_PRIVILEGED }}
+- --privileged
+{{- end }}
+
+{{- else if strings.TrimSpace (eval.Shell "command -v limactl 2>/dev/null || true") }}
+
+- limactl
+- shell
+
+{{- $lima_list := strings.Split "\n"
+      (
+        eval.Shell "limactl list --json"
+          | jq "select(.status == \"Running\") | .name"
+      )
+-}}
+
+{{- if $lima_list }}
+- {{ index $lima_list 0 }}
+{{- else }}
+- default
+{{- end }}
+
+{{- if env.RUN_CTR_PRIVILEGED }}
+- sudo
+{{- end }}
+- nerdctl
+- run
+- --rm
+{{- if env.RUN_CTR_PRIVILEGED }}
+- --privileged
+{{- end }}
+
+{{- else if strings.TrimSpace (eval.Shell "command -v docker 2>/dev/null || true") }}
+
+- docker
+- run
+- --rm
+{{- if env.RUN_CTR_PRIVILEGED }}
+- --privileged
+{{- end }}
+
+{{- end -}}

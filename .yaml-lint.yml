@@ -6,6 +6,8 @@ ignore: |
   build/
   vendor/
   .dukkha/cache/
+  */cmd-in-ctr.yml
+  templates/*.yml
 
 rules:
   braces:

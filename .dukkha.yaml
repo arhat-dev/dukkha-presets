@@ -3,6 +3,11 @@ include:
 - golang/dukkha.yaml
 - linter/dukkha.yaml
 
+global:
+  values:
+    cmd:
+      run_container@file|template: templates/cmd-run-container.yml
+
 tools:
   workflow:
   - name: local
