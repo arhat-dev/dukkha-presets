@@ -26,6 +26,7 @@ workflow:run:
   jobs:
   - task@template: workflow:run(test-{{ matrix.preset }}, {})
 
+- name: tidy
 - name: lint
   matrix:
     include:

@@ -8,10 +8,6 @@ on:
         description: reason to run this workflow
         required: false
         default: test
-  check_run:
-    types:
-    - rerequested
-    - requested_action
   pull_request:
     branches:
     - master
@@ -22,16 +18,7 @@ on:
     - v*
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: arhat-dev/actions-setup-dukkha@master
-      with:
-        go-version: 1.17.x
-
-    - name: Lint
-      run: make lint
-
-    - name: Test
-      run: make test
+  stylecheck:
+    uses: arhat-dev/dukkha-presets/.github/workflows/stylecheck.yml@master
+  test:
+    uses: arhat-dev/dukkha-presets/.github/workflows/test.yml@master

@@ -5,8 +5,9 @@ on:
   workflow_call:
     inputs:
       go-version:
-        required: true
+        required: false
         default: "1.17.x"
+        type: string
 
 env:
   GO111MODULE: "on"
@@ -16,7 +17,7 @@ defaults:
     shell: bash
 
 jobs:
-  unit-test:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

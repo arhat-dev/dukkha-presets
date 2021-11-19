@@ -1,15 +1,17 @@
 {{- $version := env.GOLANGCI_LINT_VERSION | default "1.43" -}}
 
-{{- $local_version := strings.TrimPrefix "v" (
-      index (
-          strings.Split " " (
-            strings.TrimSpace (
-              eval.Shell "golangci-lint --version 2>/dev/null || true"
-            )
-          )
-      ) 3
+{{- $local_version_parts := strings.Split " " (
+      eval.Shell "golangci-lint --version 2>/dev/null || true"
     )
 -}}
+
+{{- $local_version := "" -}}
+{{- if gt (len $local_version) 3 -}}
+  {{- $local_version = strings.TrimPrefix "v" (
+      index $local_version_parts 3
+    )
+  -}}
+{{- end -}}
 
 {{- $prefer_local := and $local_version (strings.HasPrefix $version $local_version) -}}
 

@@ -4,14 +4,10 @@ name: image
 on:
   workflow_call:
     inputs:
-      target:
-        required: true
-        description: |-
-          buildah xbuild task name (usually same as the project name)
-
       go-version:
-        required: true
+        required: false
         default: "1.17.x"
+        type: string
 
     secrets:
       token:
@@ -21,10 +17,10 @@ on:
 
       # TODO: support cosign image signing in pipeline
       cosign-private-key:
-        required: true
+        required: false
 
       cosign-private-key-password:
-        required: true
+        required: false
 
 env:
   GO111MODULE: "on"
