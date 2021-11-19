@@ -23,6 +23,13 @@ on:
         default: ""
         type: string
 
+    secrets:
+      sonarqube-token:
+        required: false
+
+      sonarqube-server-url:
+        required: false
+
 env:
   GO111MODULE: "on"
 
@@ -42,19 +49,24 @@ jobs:
         # disable shallow-clone
         fetch-depth: 0
 
+    - name: Install sonar-scanner
+      if: startsWith(matrix.os, 'macos-')
+      run: |-
+        brew install sonar-scanner
+
     - name: Install dukkha
       uses: arhat-dev/actions-setup-dukkha@master
       with:
         version: latest
         go-version: ${{ matrix.go }}
 
-    - name: Setup multi-arch support
-      uses: dbhi/qus/action@main
-
     - name: Prepare test
       run: |-
         ${{ inputs.prepare }}
 
     - name: Test
+      env:
+        SONAR_TOKEN: ${{ secrets.sonarqube-token }}
+        SONAR_HOST_URL: ${{ secrets.sonarqube-server-url }}
       run: |-
         dukkha run workflow local run test

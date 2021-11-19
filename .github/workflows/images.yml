@@ -65,6 +65,7 @@ jobs:
         go-version: ${{ matrix.go }}
 
     - name: Setup multi-arch support
+      if: startsWith(matrix.os, 'ubuntu-')
       uses: dbhi/qus/action@main
 
     - name: Prepare image build

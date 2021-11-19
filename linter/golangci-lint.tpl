@@ -6,7 +6,7 @@
 -}}
 
 {{- $local_version := "" -}}
-{{- if gt (len $local_version) 3 -}}
+{{- if gt (len $local_version_parts) 3 -}}
   {{- $local_version = strings.TrimPrefix "v" (
       index $local_version_parts 3
     )
