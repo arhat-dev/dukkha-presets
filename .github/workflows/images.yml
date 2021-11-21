@@ -95,6 +95,9 @@ jobs:
 
     - name: Sign images
       env:
+        GHCR_USER: ${{ github.actor }}
+        GHCR_PASS: ${{ secrets.token }}
+
         COSIGN_PRIVATE_KEY: ${{ secrets.cosign-private-key }}
         COSIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.cosign-private-key-password }}
       run: |-
