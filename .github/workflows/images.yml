@@ -76,13 +76,6 @@ jobs:
       run: |-
         dukkha run workflow local run build-images
 
-    - name: Sign images
-      env:
-        COSIGN_PRIVATE_KEY: ${{ secrets.cosign-private-key }}
-        COSIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.cosign-private-key-password }}
-      run: |-
-        dukkha run workflow local run sign-images
-
     - name: List podman images
       if: always() && startsWith(matrix.os, 'ubuntu-')
       run: |-
@@ -99,3 +92,10 @@ jobs:
         GHCR_PASS: ${{ secrets.token }}
       run: |-
         dukkha run workflow local run push-images
+
+    - name: Sign images
+      env:
+        COSIGN_PRIVATE_KEY: ${{ secrets.cosign-private-key }}
+        COSIGN_PRIVATE_KEY_PASSWORD: ${{ secrets.cosign-private-key-password }}
+      run: |-
+        dukkha run workflow local run sign-images
