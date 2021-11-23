@@ -12,11 +12,11 @@ renderers:
   http:presets:
     # set base url of dukkha-presets
     #
-    # or use github raw content:
-    #
-    # select branch for your own use case
+    # NOTE: select branch for your own use case (in this case we use `master` branch)
     base_url: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master
 ```
+
+__NOTE:__ jsdelivr may cache old content, to always fetch latest content, use github raw: [https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master](https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master)
 
 ## Convensions
 
