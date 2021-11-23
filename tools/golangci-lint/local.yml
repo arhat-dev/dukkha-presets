@@ -1,0 +1,52 @@
+{{- define "tools.golangci-lint.local" -}}
+
+{{- $version := var.version | default "1.43" -}}
+{{- $config := var.config | default ".golangci.yml" -}}
+{{- $args := var.args | default (strings.Split "," "--fix") -}}
+{{- $packages := var.packages | default (strings.Split "," "./...") -}}
+
+{{- $local_version_parts := strings.Split " " (
+      eval.Shell "golangci-lint --version 2>/dev/null || true"
+    )
+-}}
+
+{{- $local_version := "" -}}
+{{- if gt (len $local_version_parts) 3 -}}
+  {{- $local_version = strings.TrimPrefix "v" (
+      index $local_version_parts 3
+    )
+  -}}
+{{- end -}}
+
+{{- $has_local := and $local_version (
+    strings.HasPrefix $version $local_version
+  )
+-}}
+
+{{- if $has_local -}}
+
+- golangci-lint
+- run
+
+{{- $found_config_in_args := false }}
+{{- range $_, $v := $args }}
+
+{{- if not $found_config_in_args }}
+  {{- $found_config_in_args = eq $v "--config" "-c" }}
+{{- end }}
+
+- {{ $v }}
+{{- end }}
+
+{{- if not $found_config_in_args }}
+- --config
+- "{{ $config }}"
+{{- end -}}
+
+{{- range $_, $v := $packages }}
+- "{{ $v }}"
+{{- end }}
+
+{{- end -}}
+
+{{- end -}}

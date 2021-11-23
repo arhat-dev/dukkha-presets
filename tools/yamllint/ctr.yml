@@ -1,0 +1,44 @@
+{{- define "tools.yamllint.ctr" -}}
+
+{{- $version := var.version | default "1.26" -}}
+{{- $config := var.config | default ".yaml-lint.yml" -}}
+{{- $args := var.args | default (slice) -}}
+{{- $files := var.files | default (strings.Split "," ".") -}}
+{{- $image := var.image | default (printf "ghcr.io/arhat-dev/yamllint:%s" $version) -}}
+
+{{- $run_ctr := var.run_ctr
+    | default values.cmd.run_ctr
+    | default (strings.Split "," "docker,run,--rm,-t")
+-}}
+
+  {{- range $_, $v := $run_ctr }}
+- "{{ $v }}"
+  {{- end }}
+- -v
+- "{{- env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR -}}"
+- -w
+- "{{- var.workdir | default env.DUKKHA_WORKING_DIR -}}"
+- "{{ $image }}"
+- yamllint
+
+{{- $found_config_in_args := false }}
+{{- range $_, $v := $args }}
+
+{{- if not $found_config_in_args }}
+  {{- $found_config_in_args = eq $v "-c" "--config-file" }}
+{{- end }}
+
+- {{ $v }}
+
+{{- end }}
+
+{{- if not $found_config_in_args }}
+- --config-file
+- "{{ $config }}"
+{{- end }}
+
+{{- range $_, $v := $files }}
+- {{ $v }}
+{{- end }}
+
+{{- end -}}

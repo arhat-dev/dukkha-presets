@@ -4,9 +4,40 @@
 
 Shared `dukkha` config recipes for `arhat-dev`
 
+## Usage
+
+```yaml
+renderers:
+  # (required) add renderer `http:presets`
+  http:presets:
+    # set base url of dukkha-presets
+    #
+    # NOTE: select branch for your own use case (in this case we use `master` branch)
+    base_url: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master
+```
+
+__NOTE:__ jsdelivr may cache old content, to always fetch latest content, use github raw: [https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master](https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master)
+
 ## Convensions
 
-1. Use global value `cmd.run_container` (string array) to run containerized commands in `docker run` style, use `RUN_CTR` env to override.
+### Image Flavor
+
+- `native` (alias of alpine-native)
+- `alpine-native`
+  - default, use same arch image as host arch, no cross gcc toolchain, alpine based
+- `debian-navive`
+  - same as alpine-native, but based on debian
+
+- `cross` (alias of alpine-cross)
+- `alpine-cross`
+  - use same arch image as host arch, with cross gcc, alpine based, when `matrix.arch` is not supported by alpine, switch to debian based image automatically.
+  - if no cross toolchain for host_arch, switch to qemu mode automatically
+- `debian-cross` (same as alpine-cross, but debian based)
+
+- `qemu` (alias of alpine-qemu)
+- `alpine-qemu`
+  - use target `matrix.arch` image, should have qemu-static configured in host, when `matrix.arch` is not supported by alpine, switch to debian based image automatically.
+- `debian-qemu` (same as alpine-qemu, but debian based)
 
 ## LICENSE
 

@@ -65,8 +65,12 @@ jobs:
         ${{ inputs.prepare }}
 
     - name: Test
+      run: |-
+        dukkha run workflow local run test
+
+    - name: Report Test Result
       env:
         SONAR_TOKEN: ${{ secrets.sonarqube-token }}
         SONAR_HOST_URL: ${{ secrets.sonarqube-server-url }}
       run: |-
-        dukkha run workflow local run test
+        dukkha run workflow local run report

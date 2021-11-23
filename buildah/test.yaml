@@ -1,0 +1,86 @@
+tools:
+  buildah:
+  - name: local
+  - name: in-ctr
+    cmd@tpl#use-spec:
+      template: |-
+        {{- include "buildah.cmd.ctr" . -}}
+
+      include:
+      - buildah/cmd/ctr.yml
+
+      variables:
+        volume: buildah-dukkha-preset
+        workdir: ""
+        run_ctr@env: ${RUN_CTR}
+
+buildah:xbuild:
+- name: dukkha-preset
+  env:
+  - name: APP
+    value: dukkha-preset
+
+  # env for setting labels
+  - name: SOURCE_URL
+    value: https://github.com/arhat-dev/dukkha-preset
+  matrix:
+    kernel:
+    - linux
+    arch@file: matrix/container/linux/all.yml
+  image_names:
+  - image: ghcr.io/arhat-dev/dukkha-pressets
+    manifest: ghcr.io/arhat-dev/dukkha-pressets
+  steps@:
+  - id: builder
+    from@file: buildah/xbuild/golang/builder.yml
+  - __@file: buildah/xbuild/copy-all-to-app.yml
+  # - __@file: buildah/xbuild/golang/run-dukkha-build.yml
+  - run:
+      script: |-
+        #!/bin/sh
+
+        pwd
+        find /app
+
+  - from:
+      ref: scratch
+  # - copy:
+  #     from:
+  #       step:
+  #         id: builder
+  #         path@template: |-
+  #           /app/golang/testdata/build/
+  #           {{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}
+  #           /
+  #     to:
+  #       path: /
+  - set:
+      labels@file: buildah/xbuild/image-labels.yml
+      env:
+      - name: PATH
+        value: /
+      entrypoint: []
+
+workflow:run:
+- name: test-buildah
+  env:
+
+  # required env for enumerate-run-ctr.sh
+  - name: PRESET
+    value: buildah
+
+  jobs:
+  - name: buildah:in-ctr:xbuild
+    env:
+    # env to set run_ctr variable in tool
+    - name: lima_instance
+      value@file|tpl: templates/first-active-lima-instance.tpl
+    - name: RUN_CTR
+      value@file?str|shell?str: scripts/test/enumerate-run-ctr.sh
+
+    task: buildah:in-ctr:xbuild(dukkha-preset, {})
+
+    next@tpl: |-
+      {{- if not values.buildah.in_ctr.done -}}
+        buildah:in-ctr:xbuild
+      {{- end -}}

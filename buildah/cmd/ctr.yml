@@ -1,0 +1,30 @@
+{{- define "buildah.cmd.ctr" -}}
+
+{{- $version := var.version | default "latest" -}}
+{{- $image := var.image
+  | default (printf "quay.io/containers/buildah:%s" $version)
+-}}
+
+{{- $run_ctr := var.run_ctr
+    | default values.cmd.run_ctr
+    | default (strings.Split "," "docker,run")
+-}}
+
+{{- range $_, $v := $run_ctr }}
+- {{ $v }}
+{{- end }}
+
+- --entrypoint
+- ""
+- --workdir
+- {{ var.workdir | default env.DUKKHA_WORKING_DIR }}
+- -v
+- {{ env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR }}
+- -v
+- {{ var.volume | default "buildah" -}}:/var/lib/containers
+- --device
+- /dev/fuse:rw
+- {{ $image }}
+- buildah
+
+{{- end -}}

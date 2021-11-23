@@ -1,0 +1,2 @@
+{{- define "tools.shellcheck.local" -}}
+{{- end -}}

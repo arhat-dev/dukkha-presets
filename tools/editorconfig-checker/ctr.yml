@@ -1,0 +1,45 @@
+{{- define "tools.editorconfig-checker.ctr" -}}
+
+{{- $version := var.version | default "2.3" -}}
+{{- $config := var.config | default ".ecrc" -}}
+{{- $args := var.args | default (slice) -}}
+{{- $image := var.image | default (
+      printf "ghcr.io/arhat-dev/editorconfig-checker:%s" $version
+    )
+-}}
+
+{{- $run_ctr := var.run_ctr
+    | default values.cmd.run_ctr
+    | default (strings.Split "," "docker,run,--rm,-t")
+-}}
+
+{{- range $_, $v := $run_ctr }}
+- "{{ $v }}"
+{{- end }}
+- -v
+- "{{- env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR -}}"
+- -w
+- "{{- var.workdir | default env.DUKKHA_WORKING_DIR -}}"
+- "{{ $image }}"
+- editorconfig-checker
+
+{{- $found_config_in_args := false }}
+
+{{- range $_, $v := $args }}
+
+{{- if not $found_config_in_args }}
+  {{- $found_config_in_args = eq $v "-config" }}
+{{- end }}
+
+- {{ $v }}
+
+{{- end }}
+
+{{- if not $found_config_in_args }}
+
+- -config
+- "{{ $config }}"
+
+{{- end -}}
+
+{{- end -}}

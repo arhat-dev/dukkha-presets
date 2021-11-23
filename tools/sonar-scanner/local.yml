@@ -1,0 +1,46 @@
+{{- define "tools.sonar-scanner.local" -}}
+
+{{- $version := var.version | default "4.6" -}}
+{{- $args := var.args | default (slice) -}}
+
+{{- $local_version_parts := strings.Split "\n" (
+      eval.Shell "sonar-scanner --version 2>/dev/null || true"
+    )
+-}}
+
+{{- $local_version := "" -}}
+{{- if gt (len $local_version_parts) 2 -}}
+  {{- $local_version_parts = strings.Split " " (
+      index $local_version_parts 2
+    )
+  -}}
+
+  {{- if gt (len $local_version_parts) 2 -}}
+    {{- $local_version = (index $local_version_parts 2) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $has_local := and $local_version (strings.HasPrefix $version $local_version) -}}
+
+{{- if $has_local -}}
+
+- sonar-scanner
+
+{{- $has_project_base_dir_flag := false }}
+{{- range $_, $v := $args }}
+
+{{- if not $has_project_base_dir_flag }}
+  {{- $has_project_base_dir_flag = strings.HasPrefix "sonar.projectBaseDir" $v }}
+{{- end }}
+
+- {{ $v }}
+{{- end }}
+
+{{- if not $has_project_base_dir_flag }}
+- -D
+- sonar.projectBaseDir={{ var.workdir | default env.DUKKHA_WORKING_DIR }}
+{{- end }}
+
+{{- end -}}
+
+{{- end -}}

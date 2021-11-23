@@ -1,0 +1,47 @@
+{{- define "tools.sonar-scanner.ctr" -}}
+
+{{- $version := var.version | default "4.6" -}}
+{{- $args := var.args | default (slice) -}}
+{{- $image := var.image | default (
+    printf "docker.io/sonarsource/sonar-scanner-cli:%s" $version
+  )
+-}}
+
+{{- $run_ctr := var.run_ctr
+    | default values.cmd.run_ctr
+    | default (strings.Split "," "docker,run,--rm,-t")
+-}}
+
+  {{- range $_, $v := $run_ctr }}
+- "{{ $v }}"
+  {{- end }}
+
+- -v
+- "{{- env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR -}}"
+- -w
+- "{{- var.workdir | default env.DUKKHA_WORKING_DIR -}}"
+- -e
+- SONAR_HOST_URL
+- -e
+- SONAR_TOKEN
+- "{{ $image }}"
+- sonar-scanner
+
+{{- $has_project_base_dir_flag := false }}
+
+{{- range $_, $v := $args }}
+
+{{- if not $has_project_base_dir_flag }}
+  {{- $has_project_base_dir_flag = strings.HasPrefix "sonar.projectBaseDir" $v }}
+{{- end }}
+
+- "{{ $v }}"
+
+{{- end }}
+
+{{- if not $has_project_base_dir_flag }}
+- -D
+- sonar.projectBaseDir={{ var.workdir | default env.DUKKHA_WORKING_DIR }}
+{{- end -}}
+
+{{- end -}}
