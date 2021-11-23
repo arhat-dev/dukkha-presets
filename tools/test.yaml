@@ -1,0 +1,87 @@
+workflow:run:
+- name: test-tools
+  matrix:
+    tool@tpl: |-
+      {{- $matches := filepath.Glob "tools/**/local.yml" -}}
+      {{- range $_, $f := $matches }}
+      - {{ filepath.Dir $f | filepath.Base }}
+      {{- end }}
+    workdir:
+    - ""
+    - TEST_WORKDIR
+    version:
+    - ""
+    - TEST_VERSION
+    config:
+    - ""
+    - TEST_CONFIG
+    args:
+    - ""
+    - "[foo]"
+
+  jobs:
+  - name: ctr
+    env:
+    - name: kind
+      value: ctr
+    - &dukkha_only_path
+      name: PATH
+      value@tpl: |-
+        {{- filepath.Dir (eval.Shell "command -v dukkha") -}}
+
+    shell@env: &render |-
+      echo "--- START of ${kind}.yml ---"
+      dukkha render <<EOF
+      __@tpl#use-spec:
+        template: |-
+          {{- include "tools.${MATRIX_TOOL}.${kind}" . -}}
+
+        include@:
+        - __@tpl: |-
+            {{- filepath.Join "tools" "${MATRIX_TOOL}" "${kind}.yml" -}}
+
+        variables:
+          version: ${MATRIX_VERSION}
+          workdir: ${MATRIX_WORKDIR}
+          config: ${MATRIX_CONFIG}
+          args: ${MATRIX_ARGS}
+      EOF
+      echo "--- END of ${kind}.yml ---"
+
+  - name: local
+    env:
+    - name: kind
+      value: local
+    - *dukkha_only_path
+    - &add_fake_bin_path
+      name: PATH
+      value@tpl: |-
+        {{- filepath.Join env.DUKKHA_WORKING_DIR "tools" "testdata" "bin" -}}:{{ env.PATH }}
+    shell@env: *render
+
+  - name: Local first, fallback to ctr
+    env:
+    - *dukkha_only_path
+    - *add_fake_bin_path
+    shell@T:
+      value@tpl#use-spec?str:
+        template: |-
+          {{- include (printf "tools.%s.local" matrix.tool) . -}}
+
+        include@:
+        - __@tpl: |-
+            {{- filepath.Join "tools" matrix.tool "local.yml" -}}
+
+        variables@env:
+          version: ${MATRIX_VERSION}
+          workdir: ${MATRIX_WORKDIR}
+          config: ${MATRIX_CONFIG}
+          args: ${MATRIX_ARGS}
+
+      ops:
+      - template@tpl?str: |-
+          {{- if or (eq VALUE "null") (not VALUE) -}}
+            echo {{ filepath.Join "tools" matrix.tool "ctr.yml" -}}
+          {{- else -}}
+            echo {{ filepath.Join "meta" "VALUE.yml" -}}
+          {{- end -}}

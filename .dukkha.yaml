@@ -1,12 +1,12 @@
 include:
-- buildah/dukkha.yaml
-- golang/dukkha.yaml
-- linter/dukkha.yaml
+- buildah/test.yaml
+- golang/test.yaml
+- tools/test.yaml
 
 global:
   values:
     cmd:
-      run_container@file|template: templates/cmd-run-container.yml
+      run_ctr@file|tpl: templates/run-ctr.yml
 
 tools:
   workflow:
@@ -22,44 +22,40 @@ workflow:run:
     preset:
     - golang
     - buildah
-    - linter
+    - tools
   jobs:
-  - task@template: workflow:run(test-{{ matrix.preset }}, {})
+  - task@tpl: workflow:run(test-{{ matrix.preset }}, {})
 
 - name: tidy
 - name: lint
   matrix:
     include:
-    - linter: [editorconfig-checker]
+    - tool: [editorconfig-checker]
       # version: ["2.3"]
       # workdir: [""]
       # config: [".ecrc"]
 
     # TODO
-    - linter: [shellcheck]
+    - tool: [shellcheck]
       # version: [""]
       # workdir: [""]
 
-    - linter: [yamllint]
+    - tool: [yamllint]
       # version: ["1.26"]
       # workdir: [""]
       # config: [".yaml-lint.yml"]
 
-    - linter: [golangci-lint]
+    - tool: [golangci-lint]
       # version: ["1.43"]
       # workdir: [""]
       # config: [""]
       # pkgs: ["./..."]
 
-      workdir@template: |-
+      workdir@tpl: |-
         - {{ filepath.Join env.DUKKHA_WORKING_DIR "golang/testdata" -}}
-      config: ["../../linter/testdata/golangci-lint.yml"]
+      config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:
-  - shell@template|file|template: |-
-      linter/{{- matrix.linter -}}.tpl
-    env:
-    - name@template: |-
-        {{- matrix.linter | strings.SnakeCase | strings.ToUpper -}}
-      value@template: |-
-        {{- matrix.version | default "" -}}
+  - cmd@file|tpl#use-spec: tools/file.tpl
+    chdir@tpl: |-
+      {{- matrix.workdir | default "" -}}

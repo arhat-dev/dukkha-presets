@@ -1,0 +1,50 @@
+{{- define "tools.golangci-lint.ctr" -}}
+
+{{- $version := var.version | default "1.43" -}}
+{{- $config := var.config | default ".golangci.yml" -}}
+{{- $args := var.args | default (strings.Split "," "--fix") -}}
+{{- $packages := var.packages | default (strings.Split "," "./...") -}}
+{{- $image := var.image | default (
+      printf "ghcr.io/arhat-dev/golangci-lint:%s" $version
+    )
+-}}
+
+{{- $run_ctr := var.run_ctr
+    | default values.cmd.run_ctr
+    | default (strings.Split "," "docker,run,--rm,-t")
+-}}
+
+{{- range $_, $v := $run_ctr }}
+- "{{ $v }}"
+{{- end }}
+
+- -v
+- "{{- env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR -}}"
+- -w
+- "{{- var.workdir | default env.DUKKHA_WORKING_DIR -}}"
+- "{{ $image }}"
+- golangci-lint
+- run
+
+{{- $found_config_in_args := false }}
+
+{{- range $_, $v := $args }}
+
+{{- if not $found_config_in_args }}
+  {{- $found_config_in_args = eq $v "--config" "-c" }}
+{{- end }}
+
+- "{{ $v }}"
+
+{{- end }}
+
+{{- if not $found_config_in_args }}
+- --config
+- "{{ $config }}"
+{{- end }}
+
+{{- range $_, $v := $packages }}
+- "{{ $v }}"
+{{- end }}
+
+{{- end -}}

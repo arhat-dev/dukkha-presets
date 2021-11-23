@@ -1,0 +1,24 @@
+tools:
+  cosign:
+  - name: local
+  - name: in-ctr
+    cmd@tpl#use-spec:
+      template: |-
+        {{- include "cosign.cmd.ctr" . -}}
+      include:
+      - cosign/cmd/ctr.yml
+      variables: {}
+        # run_ctr:
+
+# cosign:sign:
+# - name: dukkha-presets
+#
+# cosign:sign-image:
+# - name: dukkha-presets
+
+cosign:upload:
+- name: dukkha-presets
+
+workflow:run:
+# TODO
+- name: test-cosign

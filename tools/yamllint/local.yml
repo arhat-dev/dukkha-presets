@@ -1,0 +1,42 @@
+{{- define "tools.yamllint.local" -}}
+
+{{- $version := var.version | default "1.26" -}}
+{{- $config := var.config | default ".yaml-lint.yml" -}}
+{{- $args := var.args | default (slice) -}}
+{{- $files := var.files | default (strings.Split "," ".") -}}
+
+{{- $local_version := strings.TrimPrefix "yamllint " (strings.TrimSpace (
+      eval.Shell "yamllint --version 2>/dev/null || true"
+    ))
+-}}
+
+{{- $has_local := and $local_version (strings.HasPrefix $version $local_version) -}}
+
+{{- if $has_local -}}
+
+- yamllint
+
+{{- $found_config_in_args := false }}
+
+{{- range $_, $v := $args }}
+
+{{- if not $found_config_in_args }}
+  {{- $found_config_in_args = eq $v "-c" "--config-file" }}
+{{- end }}
+
+- {{ $v }}
+
+{{- end }}
+
+{{- if not $found_config_in_args }}
+- -c
+- "{{ $config }}"
+{{- end -}}
+
+{{- range $_, $v := $files }}
+- {{ $v }}
+{{- end }}
+
+{{- end -}}
+
+{{- end -}}

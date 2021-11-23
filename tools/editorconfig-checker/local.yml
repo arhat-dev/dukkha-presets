@@ -1,0 +1,35 @@
+{{- define "tools.editorconfig-checker.local" -}}
+
+{{- $version := var.version | default "2.3" -}}
+{{- $config := var.config | default ".ecrc" -}}
+{{- $args := var.args | default (slice) -}}
+{{- $local_version := strings.TrimSpace (
+      eval.Shell "editorconfig-checker -version 2>/dev/null || true"
+    )
+-}}
+
+{{- $has_local := and $local_version (strings.HasPrefix $version $local_version) -}}
+
+{{- if $has_local -}}
+- editorconfig-checker
+
+{{- $found_config_in_args := false }}
+
+{{- range $_, $v := $args }}
+
+{{- if not $found_config_in_args }}
+  {{- $found_config_in_args = eq $v "-config" }}
+{{- end }}
+
+- {{ $v }}
+
+{{- end }}
+
+{{- if not $found_config_in_args }}
+- -config
+- "{{ $config }}"
+{{- end -}}
+
+{{- end -}}
+
+{{- end -}}

@@ -1,0 +1,124 @@
+{{- /*
+
+description: Generate list of strings to run container
+
+usage:
+  foo@tpl:
+    template@http?str: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/templates/run-ctr.yml
+    variables:
+      # preferred tool lookup order
+      #
+      # Defaults to following order (left to right)
+      order: [podman, nerdctl, limactl, docker]
+
+      # run container in privileged mode
+      #
+      # Defaults to false
+      privileged: false
+
+      # extra args passed when running command
+      args: []
+
+*/ -}}
+
+{{- $order := strings.Split "," "podman,nerdctl,limactl,docker" -}}
+{{- if var.order -}}
+  {{- $order = var.order -}}
+{{- end -}}
+
+{{- $try := true -}}
+
+{{- range $_, $tool := $order -}}
+
+  {{- if $try -}}
+
+    {{- if strings.TrimSpace (
+        eval.Shell (
+          printf "command -v %s 2>/dev/null || true" $tool
+        )
+      ) -}}
+
+{{- $try = false -}}
+
+{{- if eq $tool "podman" -}}
+
+  {{- if var.privileged }}
+- sudo
+  {{- end }}
+- podman
+- run
+- --rm
+  {{- if var.privileged }}
+- --privileged
+  {{- end }}
+
+  {{- range $_, $arg := var.args }}
+- {{ $arg }}
+  {{- end }}
+
+{{- else if eq $tool "nerdctl" -}}
+
+  {{- if var.privileged }}
+- sudo
+  {{- end }}
+- nerdctl
+- run
+- --rm
+  {{- if var.privileged }}
+- --privileged
+  {{- end }}
+
+  {{- range $_, $arg := var.args }}
+- {{ $arg }}
+  {{- end }}
+
+{{- else if eq $tool "limactl" }}
+
+- limactl
+- shell
+
+{{- $lima_list := strings.Split "\n"
+      (
+        eval.Shell "limactl list --json"
+          | jq "select(.status == \"Running\") | .name"
+      )
+-}}
+
+  {{- if $lima_list }}
+- {{ index $lima_list 0 }}
+  {{- else }}
+- default
+  {{- end }}
+
+  {{- if var.privileged }}
+- sudo
+  {{- end }}
+- nerdctl
+- run
+- --rm
+  {{- if var.privileged }}
+- --privileged
+  {{- end }}
+
+  {{- range $_, $arg := var.args }}
+- {{ $arg }}
+  {{- end }}
+
+{{- else if eq $tool "docker" }}
+
+- docker
+- run
+- --rm
+  {{- if var.privileged }}
+- --privileged
+  {{- end }}
+
+  {{- range $_, $arg := var.args }}
+- {{ $arg }}
+  {{- end }}
+
+{{- end -}} {{- /* if tool match */ -}}
+
+    {{- end -}} {{- /* if command -v */ -}}
+  {{- end -}} {{- /* if $try */ -}}
+{{- end -}} {{- /* range */ -}}
