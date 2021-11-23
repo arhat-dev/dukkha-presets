@@ -26,6 +26,7 @@ workflow:run:
   jobs:
   - task@tpl: workflow:run(test-{{ matrix.preset }}, {})
 
+- name: report
 - name: tidy
 - name: lint
   matrix:
