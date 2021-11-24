@@ -1,7 +1,7 @@
 copy:
   from:
     step:
-      id@template: |-
+      id@tpl: |-
         {{- env.CA_SRC_STEP | "builder" -}}
       path: /etc/ssl/certs
   to:

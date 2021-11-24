@@ -1,41 +1,43 @@
-# Build executables `${OUTPUT_DIR}/{{ matrix.cmd }}.{{ matrix.kernel }}.{{ matrix.arch }}`
-# from ./cmd/{{ matrix.cmd }}
+{{- define "golang.build.cmd" -}}
 
-# Required Env: MODULE_NAME
-# Required matrix vector names: cmd, kernel, arch
-# Optional Env: OUTPUT_DIR
+{{- $module_name := var.module_name | default env.MODULE_NAME -}}
+{{- if not $module_name -}}
+  {{- $module_name = eval.Shell "go list -m || true"
+      | strings.TrimSpace
+      | strings.TrimPrefix "command-line-arguments"
+  -}}
+{{- end -}}
 
-path@template: ./cmd/{{- matrix.cmd -}}
-tags:
-- netgo
-- osusergo
-- timetzdata
+{{- $module_name = $module_name | default "." -}}
 
-ldflags@template:
+{{- $kernel := var.kernel | default matrix.kernel | default env.HOST_KERNEL | default "linux" -}}
+{{- $arch := var.arch | default matrix.arch | default env.HOST_ARCH | default "amd64" -}}
+
+{{- $suffix := "" -}}
+{{- if eq $kernel "windows" -}}
+  {{- $suffix = ".exe" -}}
+{{- end -}}
+
+{{- $output_dir := var.output_dir | default "build" -}}
+{{- $cmd := var.cmd | default matrix.cmd | default "" -}}
+
+path: ./cmd/{{ $cmd }}
+
+ldflags:
 - -s -w
-- -X "{{- env.MODULE_NAME -}}/pkg/version.branch={{- env.GIT_BRANCH -}}"
-- -X "{{- env.MODULE_NAME -}}/pkg/version.commit={{- env.GIT_COMMIT -}}"
-- -X "{{- env.MODULE_NAME -}}/pkg/version.tag={{- env.GIT_TAG -}}"
-- -X "{{- env.MODULE_NAME -}}/pkg/version.arch={{- matrix.arch -}}"
-- -X "{{- env.MODULE_NAME -}}/pkg/version.workspaceClean={{- env.GIT_WORKTREE_CLEAN -}}"
-- -X "{{- env.MODULE_NAME -}}/pkg/version.buildTime={{ now.UTC.Format "2006-01-02T15:04:05Z07:00" }}"
+- -X "{{- $module_name -}}/pkg/version.branch={{- env.GIT_BRANCH -}}"
+- -X "{{- $module_name -}}/pkg/version.commit={{- env.GIT_COMMIT -}}"
+- -X "{{- $module_name -}}/pkg/version.tag={{- env.GIT_TAG -}}"
+- -X "{{- $module_name -}}/pkg/version.arch={{- $arch -}}"
+- -X "{{- $module_name -}}/pkg/version.worktreeClean={{- env.GIT_WORKTREE_CLEAN -}}"
+- -X "{{- $module_name -}}/pkg/version.buildTime={{ now.UTC.Format "2006-01-02T15:04:05Z07:00" }}"
 # TODO
-# - -X "{{- env.MODULE_NAME -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
+# - -X "{{- $module_name -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
 
-outputs@template: |-
-  {{- $suffix := "" -}}
-  {{- if eq matrix.kernel "windows" -}}
-    {{- $suffix = ".exe" -}}
-  {{- end -}}
-
-  {{- $output_dir := env.OUTPUT_DIR | default "build" -}}
-
-  {{- if and (eq matrix.kernel env.HOST_KERNEL) (eq matrix.arch env.HOST_ARCH) }}
-  - {{ filepath.Join $output_dir (printf "%s%s" matrix.cmd $suffix) }}
+outputs:
+  {{- if and (eq $kernel env.HOST_KERNEL) (eq $arch env.HOST_ARCH) }}
+- {{ filepath.Join $output_dir (printf "%s%s" $cmd $suffix) }}
   {{- end }}
-  - {{ filepath.Join $output_dir (printf "%s.%s.%s%s" matrix.cmd matrix.kernel matrix.arch $suffix) }}
+- {{ filepath.Join $output_dir (printf "%s.%s.%s%s" $cmd $kernel $arch $suffix) }}
 
-extra_args:
-- -buildmode=exe
-- -mod=vendor
-- -trimpath
+{{- end -}}

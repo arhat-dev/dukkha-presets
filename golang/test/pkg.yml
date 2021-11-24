@@ -7,8 +7,8 @@
   # after:success:
   # - shell: go tool pprof ${PROFILE_DIR}/mem.out
 
-path@template: ./{{- matrix.pkg -}}
-json_output_file@template: |-
+path@tpl: ./{{- matrix.pkg -}}
+json_output_file@tpl: |-
   {{- if matrix.pkg -}}
     {{- env.PROFILE_DIR -}}/result-{{ matrix.pkg | strings.KebabCase }}.json
   {{- else -}}
@@ -22,18 +22,18 @@ profile:
   output_dir@env: ${PROFILE_DIR}
   coverage:
     enabled: true
-    output@template: |-
+    output@tpl: |-
       {{- if matrix.pkg -}}
         coverage.{{ matrix.pkg | strings.KebabCase }}.txt
       {{- else -}}
         coverage.txt
       {{- end -}}
     packages@:
-    - __@template: ./{{- matrix.pkg -}}
+    - __@tpl: ./{{- matrix.pkg -}}
 
   memory:
     enabled: true
-    output@template: |-
+    output@tpl: |-
       {{- if matrix.pkg -}}
         memory.{{ matrix.pkg | strings.KebabCase }}.out
       {{- else -}}
@@ -42,7 +42,7 @@ profile:
 
   cpu:
     enabled: true
-    output@template: |-
+    output@tpl: |-
       {{- if matrix.pkg -}}
         cpu.{{ matrix.pkg | strings.KebabCase }}.out
       {{- else -}}
@@ -51,7 +51,7 @@ profile:
 
   mutex:
     enabled: true
-    output@template: |-
+    output@tpl: |-
       {{- if matrix.pkg -}}
         mutex.{{ matrix.pkg | strings.KebabCase }}.out
       {{- else -}}
@@ -60,7 +60,7 @@ profile:
 
   block:
     enabled: true
-    output@template: |-
+    output@tpl: |-
       {{- if matrix.pkg -}}
         block.{{ matrix.pkg | strings.KebabCase }}.out
       {{- else -}}
@@ -69,7 +69,7 @@ profile:
 
   trace:
     enabled: true
-    output@template: |-
+    output@tpl: |-
       {{- if matrix.pkg -}}
         trace.{{ matrix.pkg | strings.KebabCase }}.out
       {{- else -}}

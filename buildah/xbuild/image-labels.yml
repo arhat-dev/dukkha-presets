@@ -1,2 +1,2 @@
 - name: org.opencontainers.image.source
-  value@template: "{{- env.SOURCE -}}"
+  value@tpl: "{{- env.SOURCE -}}"

@@ -58,7 +58,7 @@ golang:test:
   - name: PROFILE_DIR
     value: golang/testdata/build/test-profile
   matrix:
-    pkg@template: |-
+    pkg@tpl: |-
       {{-
         eval.Shell "cd golang/testdata && go list ./..."
         | removePrefix
@@ -84,7 +84,7 @@ workflow:run:
   - name: golang:in-ctr:build
     task: |-
       golang:in-ctr:build(dukkha-preset, { kernel: [linux] })
-    next@template: |-
+    next@tpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:build
       {{- end -}}
@@ -106,7 +106,7 @@ workflow:run:
   - name: golang:in-ctr:test
     task: |-
       golang:in-ctr:test(dukkha-preset-pkg, {})
-    next@template: |-
+    next@tpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:test
       {{- end -}}

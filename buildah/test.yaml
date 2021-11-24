@@ -48,7 +48,7 @@ buildah:xbuild:
   #     from:
   #       step:
   #         id: builder
-  #         path@template: |-
+  #         path@tpl: |-
   #           /app/golang/testdata/build/
   #           {{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}
   #           /
