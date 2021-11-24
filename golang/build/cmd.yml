@@ -1,6 +1,6 @@
 {{- define "golang.build.cmd" -}}
 
-{{- $module_name := var.module_name | default env.MODULE_NAME -}}
+{{- $module_name := var.module_name -}}
 {{- if not $module_name -}}
   {{- $module_name = eval.Shell "go list -m || true"
       | strings.TrimSpace
@@ -10,8 +10,8 @@
 
 {{- $module_name = $module_name | default "." -}}
 
-{{- $kernel := var.kernel | default matrix.kernel | default env.HOST_KERNEL | default "linux" -}}
-{{- $arch := var.arch | default matrix.arch | default env.HOST_ARCH | default "amd64" -}}
+{{- $kernel := matrix.kernel | default env.HOST_KERNEL | default "linux" -}}
+{{- $arch := matrix.arch | default env.HOST_ARCH | default "amd64" -}}
 
 {{- $suffix := "" -}}
 {{- if eq $kernel "windows" -}}
