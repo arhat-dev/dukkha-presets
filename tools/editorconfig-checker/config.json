@@ -14,7 +14,8 @@
     ".*\\.tar.*",
     ".*\\.zip.*",
     ".*\\.rar.*",
-    "third_party/golang/.*doc.go",
+    "target/.*",
+    ".*doc.go",
     "testdata.*"
   ],
   "AllowedContentTypes": [],
