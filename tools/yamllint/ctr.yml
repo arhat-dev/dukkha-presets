@@ -28,7 +28,7 @@
   {{- $found_config_in_args = eq $v "-c" "--config-file" }}
 {{- end }}
 
-- {{ $v }}
+- "{{ $v }}"
 
 {{- end }}
 
@@ -38,7 +38,7 @@
 {{- end }}
 
 {{- range $_, $v := $files }}
-- {{ $v }}
+- "{{ $v }}"
 {{- end }}
 
 {{- end -}}

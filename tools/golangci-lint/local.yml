@@ -1,7 +1,7 @@
 {{- define "tools.golangci-lint.local" -}}
 
 {{- $version := var.version | default "1.43" -}}
-{{- $config := var.config | default ".golangci.yml" -}}
+{{- $config := var.config | default "" -}}
 {{- $args := var.args | default (strings.Split "," "--fix") -}}
 {{- $packages := var.packages | default (strings.Split "," "./...") -}}
 
@@ -32,13 +32,13 @@
 {{- range $_, $v := $args }}
 
 {{- if not $found_config_in_args }}
-  {{- $found_config_in_args = eq $v "--config" "-c" }}
+  {{- $found_config_in_args = eq $v "--config" "-c" "--no-config" }}
 {{- end }}
 
 - {{ $v }}
 {{- end }}
 
-{{- if not $found_config_in_args }}
+{{- if and $config (not $found_config_in_args) }}
 - --config
 - "{{ $config }}"
 {{- end -}}

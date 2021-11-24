@@ -1,0 +1,30 @@
+{
+  "Verbose": false,
+  "Debug": false,
+  "IgnoreDefaults": false,
+  "SpacesAftertabs": false,
+  "NoColor": false,
+  "Exclude": [
+    "\\.git/.*",
+    "private/.*",
+    "vendor/.*",
+    "generated/.*",
+    "build/.*",
+    ".dukkha/.*",
+    ".*\\.tar.*",
+    ".*\\.zip.*",
+    ".*\\.rar.*",
+    "target/.*",
+    ".*doc.go",
+    "testdata.*"
+  ],
+  "AllowedContentTypes": [],
+  "Disable": {
+    "EndOfLine": false,
+    "Indentation": false,
+    "InsertFinalNewline": false,
+    "TrimTrailingWhitespace": false,
+    "IndentSize": false,
+    "MaxLineLength": false
+  }
+}
