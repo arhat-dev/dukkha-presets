@@ -1,8 +1,3 @@
-# This is the sample config to use golang recipes
-renderers:
-  env:
-    enable_exec: true
-
 global:
   env:
   - name: GO_VERSION
@@ -32,28 +27,23 @@ tools:
 golang:build:
 # define task name
 - name: dukkha-preset
-  __@file: golang/build/cmd.yml
-  # set env required by golang/build/cmd.yml
-  env:
-  - name: MODULE_NAME
-    value: arhat.dev/dukkha-preset
-  # set matrix vectors (cmd, kernel, arch), as required by golang/build/cmd.yml
-  matrix@:
-    cmd:
-    - dukkha-preset
-    - foo
-    __@!:
-      value@tpl|file: |-
-        matrix/golang/{{- env.GO_VERSION -}}/common.yml
-      select: |-
-        .include.[].cmd = ["dukkha-preset", "foo"]
-  cgo:
-    enabled: true
+  matrix@!:
+    value@tpl|file: |-
+      matrix/golang/{{- env.GO_VERSION -}}/common.yml
+    select: |-
+      .include.[].cmd = ["dukkha-preset", "foo"] | .cmd = ["dukkha-preset", "foo"]
+
+  __@tpl#use-spec:
+    template: |-
+      {{- include "golang.build.cmd" . -}}
+    include:
+    - golang/build/cmd.yml
+    variables:
+      module_name: arhat.dev/dukkha-preset
   chdir: golang/testdata
 
 golang:test:
 - name: dukkha-preset-pkg
-  __@file: golang/test/pkg.yml
   env:
   - name: PROFILE_DIR
     value: golang/testdata/build/test-profile
@@ -61,13 +51,21 @@ golang:test:
     pkg@tpl: |-
       {{-
         eval.Shell "cd golang/testdata && go list ./..."
-        | removePrefix
-          (eval.Shell "cd golang/testdata && go list -m" | trimSuffix "\n")
-        | addPrefix "- "
+          | removePrefix
+              (eval.Shell "cd golang/testdata && go list -m" | strings.TrimSpace)
+          | removePrefix "/"
+          | addPrefix "- "
       -}}
   hooks:
     before:
     - shell: mkdir -p ${PROFILE_DIR}
+
+  __@tpl#use-spec:
+    template: |-
+      {{- include "golang.test.pkg" . -}}
+    include:
+    - golang/test/pkg.yml
+
   chdir: golang/testdata
 
 workflow:run:

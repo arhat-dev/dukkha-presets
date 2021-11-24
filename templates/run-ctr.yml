@@ -3,8 +3,8 @@
 description: Generate list of strings to run container
 
 usage:
-  foo@tpl:
-    template@http?str: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/templates/run-ctr.yml
+  foo@tpl#use-spec:
+    template@http:presets?str: templates/run-ctr.yml
     variables:
       # preferred tool lookup order
       #
