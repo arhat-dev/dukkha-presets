@@ -5,13 +5,33 @@ Run [`golangci-lint`](https://github.com/golangci/golangci-lint) to lint golang 
 ## Usage
 
 ```yaml
-foo@tpl:
-  template@http?str: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/tools/golangci-lint.yml
+foo@tpl#use-spec:
+  template: |-
+    {{- include "tools.golangci-lint.ctr" . -}}
+
+  include:
+  - __@http:presets#cached-file?str: tools/golangci-lint/ctr.yml
+
   variables:
     # version of golangci-lint
     #
     # Defaults to "1.43"
     version: "1.43"
+
+    # extra args to golangci run
+    #
+    # Defaults to ["--fix"]
+    args: ["--fix"]
+
+    # config of golangci-lint
+    #
+    # Defaults to "" (empty string) as golangci-lint will lookup config actively
+    config: ""
+
+    # packages to lint
+    # defaults to [./...]
+    packages:
+    - ./...
 
     # workdir when running golangci-lint
     #
@@ -23,14 +43,4 @@ foo@tpl:
     #
     # Defaults to values.cmd.run_ctr, then [docker, run, --rm]
     run_ctr: []
-
-    # config of golangci-lint
-    #
-    # Defaults to ".ecrc"
-    config: ".ecrc"
-
-    # packages to lint
-    # defaults to [./...]
-    packages:
-    - ./...
 ```
