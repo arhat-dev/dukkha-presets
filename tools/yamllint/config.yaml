@@ -7,10 +7,12 @@ ignore: |
   cicd/deploy/charts/**/templates/
   cicd/deploy/charts/**/crds/
   cicd/deploy/kube/
-  private/
+  private/**
   build/
-  **/testdata/**
-  **fixture**
+  **/*testdata*/**
+  **/_fixtures/
+  **/fixtures/
+  **/cache/
 
 rules:
   braces:

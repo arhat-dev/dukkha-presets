@@ -24,17 +24,17 @@
   {{- $found_config_in_args = eq $v "-c" "--config-file" }}
 {{- end }}
 
-- {{ $v }}
+- "{{ $v }}"
 
 {{- end }}
 
 {{- if not $found_config_in_args }}
-- -c
+- --config-file
 - "{{ $config }}"
-{{- end -}}
+{{- end }}
 
 {{- range $_, $v := $files }}
-- {{ $v }}
+- "{{ $v }}"
 {{- end }}
 
 {{- end -}}
