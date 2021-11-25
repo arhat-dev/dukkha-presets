@@ -6,10 +6,10 @@ template: |-
   {{- end -}}
   {{- $cmd -}}
 
-include@:
-- __@tpl|http:presets#cached-file: |-
+include:
+- text@tpl|http:presets?str: |-
     {{- path.Join "tools" matrix.tool "local.yml" -}}
-- __@tpl|http:presets#cached-file: |-
+- text@tpl|http:presets?str: |-
     {{- path.Join "tools" matrix.tool "ctr.yml" -}}
 
 variables:

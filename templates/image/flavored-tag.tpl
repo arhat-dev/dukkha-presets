@@ -25,18 +25,18 @@ Required arguments
 
   {{- if and
             (ne $host_arch $arch)
-            (not (eq $host_arch "amd64"))
+            (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4"))
   -}}
 
     {{- $host_arch = $arch -}}
 
   {{- end -}}
 
-  {{- if eq $arch "armv5" "mips64le" -}}
+  {{- if eq $arch "armv5" "mips64le" "mips64lesf" -}}
 
     {{- if and
               (ne $host_arch $arch)
-              (not (eq $host_arch "amd64" "arm64"))
+              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64"))
     -}}
 
       {{- $host_arch = $arch -}}
@@ -55,7 +55,7 @@ Required arguments
 
   {{- if and
             (ne $host_arch $arch)
-            (not (eq $host_arch "amd64" "arm64"))
+            (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64"))
   -}}
 
     {{- $host_arch = $arch -}}
@@ -66,7 +66,7 @@ Required arguments
 
     {{- if and
               (ne $host_arch $arch)
-              (not (eq $host_arch "amd64"))
+              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4"))
     -}}
 
       {{- $host_arch = $arch -}}
@@ -83,7 +83,7 @@ Required arguments
 
 {{- else if eq $flavor "qemu" "alpine-qemu" -}}
 
-  {{- if eq $arch "armv5" "mips64le" -}}
+  {{- if eq $arch "armv5" "mips64le" "mips64lesf" -}}
 
     {{- $tag = printf "debian-%s" $arch -}}
 

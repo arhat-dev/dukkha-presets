@@ -6,10 +6,10 @@ template: |-
   {{- end -}}
   {{- $cmd -}}
 
-include@:
-- __@tpl: |-
+include:
+- text@tpl|file?str: |-
     {{- filepath.Join "tools" matrix.tool "local.yml" -}}
-- __@tpl: |-
+- text@tpl|file?str: |-
     {{- filepath.Join "tools" matrix.tool "ctr.yml" -}}
 
 variables:

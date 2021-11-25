@@ -36,8 +36,8 @@ workflow:run:
         template: |-
           {{- include "tools.${MATRIX_TOOL}.${kind}" . -}}
 
-        include@:
-        - __@tpl: |-
+        include:
+        - text@tpl|file?str: |-
             {{- filepath.Join "tools" "${MATRIX_TOOL}" "${kind}.yml" -}}
 
         variables:
@@ -68,8 +68,8 @@ workflow:run:
         template: |-
           {{- include (printf "tools.%s.local" matrix.tool) . -}}
 
-        include@:
-        - __@tpl: |-
+        include:
+        - text@tpl|file?str: |-
             {{- filepath.Join "tools" matrix.tool "local.yml" -}}
 
         variables@env:

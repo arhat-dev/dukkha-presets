@@ -1,77 +1,76 @@
-# Required env: PROFILE_DIR
-# Required matrix vectors: pkg
-# Required hooks:
-# hooks:
-#   before:
-#   - shell: mkdir -p ${PROFILE_DIR}
-  # after:success:
-  # - shell: go tool pprof ${PROFILE_DIR}/mem.out
+{{- define "golang.test.pkg" -}}
 
-path@template: ./{{- matrix.pkg -}}
-json_output_file@template: |-
-  {{- if matrix.pkg -}}
-    {{- env.PROFILE_DIR -}}/result-{{ matrix.pkg | strings.KebabCase }}.json
-  {{- else -}}
-    {{- env.PROFILE_DIR -}}/result.json
-  {{- end -}}
+{{- $profile_dir := var.profile_dir | default "build/test-profile" -}}
+{{- $pkg := matrix.pkg | default "" -}}
+{{- $cover_pkg := var.cover_pkg | default (printf "./%s" $pkg) -}}
 
+path: ./{{ $pkg }}
 verbose: true
 panic_on_exit_0: true
 
+{{- if $pkg }}
+json_output_file: {{ $profile_dir -}}/result-{{ $pkg | strings.KebabCase }}.json
+{{- else }}
+json_output_file: {{ $profile_dir -}}/result.json
+{{- end }}
+
 profile:
-  output_dir@env: ${PROFILE_DIR}
+  output_dir: {{ $profile_dir }}
   coverage:
     enabled: true
-    output@template: |-
-      {{- if matrix.pkg -}}
-        coverage.{{ matrix.pkg | strings.KebabCase }}.txt
-      {{- else -}}
-        coverage.txt
-      {{- end -}}
-    packages@:
-    - __@template: ./{{- matrix.pkg -}}
+
+    {{- if $pkg }}
+    output: coverage.{{ $pkg | strings.KebabCase }}.txt
+    {{- else }}
+    output: coverage.txt
+    {{- end }}
+
+    packages:
+    - {{ $cover_pkg }}
 
   memory:
     enabled: true
-    output@template: |-
-      {{- if matrix.pkg -}}
-        memory.{{ matrix.pkg | strings.KebabCase }}.out
-      {{- else -}}
-        memory.out
-      {{- end -}}
+
+    {{- if $pkg }}
+    output: memory.{{ $pkg | strings.KebabCase }}.out
+    {{- else }}
+    output: memory.out
+    {{- end }}
 
   cpu:
     enabled: true
-    output@template: |-
-      {{- if matrix.pkg -}}
-        cpu.{{ matrix.pkg | strings.KebabCase }}.out
-      {{- else -}}
-        cpu.out
-      {{- end -}}
+
+    {{- if $pkg }}
+    output: cpu.{{ $pkg | strings.KebabCase }}.out
+    {{- else }}
+    output: cpu.out
+    {{- end }}
 
   mutex:
     enabled: true
-    output@template: |-
-      {{- if matrix.pkg -}}
-        mutex.{{ matrix.pkg | strings.KebabCase }}.out
-      {{- else -}}
-        mutex.out
-      {{- end -}}
+
+    {{- if $pkg }}
+    output: mutex.{{ $pkg | strings.KebabCase }}.out
+    {{- else }}
+    output: mutex.out
+    {{- end }}
 
   block:
     enabled: true
-    output@template: |-
-      {{- if matrix.pkg -}}
-        block.{{ matrix.pkg | strings.KebabCase }}.out
-      {{- else -}}
-        block.out
-      {{- end -}}
+
+    {{- if $pkg }}
+    output: block.{{ $pkg | strings.KebabCase }}.out
+    {{- else }}
+    output: block.out
+    {{- end }}
 
   trace:
     enabled: true
-    output@template: |-
-      {{- if matrix.pkg -}}
-        trace.{{ matrix.pkg | strings.KebabCase }}.out
-      {{- else -}}
-        trace.out
-      {{- end -}}
+
+    {{- if $pkg }}
+    output: trace.{{ $pkg | strings.KebabCase }}.out
+    {{- else }}
+    output: trace.out
+    {{- end }}
+
+{{- end -}}

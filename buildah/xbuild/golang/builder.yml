@@ -1,6 +1,6 @@
 # see ../../../golang/tool-in-ctr.yml
 # treat BUILDER_FLAVOR as IMAGE_FLAVOR
-ref@template: |-
+ref@tpl: |-
   {{- $flavor := env.BUILDER_FLAVOR | default "native" -}}
   {{- $ver := env.GO_VERSION | default "1.17" -}}
   {{- $arch := trimSuffix "sf" (default env.HOST_ARCH matrix.arch) -}}

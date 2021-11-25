@@ -10,7 +10,7 @@ foo@tpl#use-spec:
     {{- include "tools.golangci-lint.ctr" . -}}
 
   include:
-  - __@http:presets#cached-file?str: tools/golangci-lint/ctr.yml
+  - text@http:presets?str: tools/golangci-lint/ctr.yml
 
   variables:
     # version of golangci-lint
