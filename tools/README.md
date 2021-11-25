@@ -14,22 +14,22 @@ workflow:run:
 - name: lint
   matrix:
     include:
-    - linter: [editorconfig-checker]
+    - tool: [editorconfig-checker]
       # version: ["2.3"]
       # workdir: [""]
       # config: [".ecrc"]
 
-    - linter: [shellcheck]
+    - tool: [shellcheck]
       # version: [""]
       # workdir: [""]
 
-    - linter: [yamllint]
+    - tool: [yamllint]
       # version: ["1.26"]
       # workdir: [""]
       # config: [".yaml-lint.yml"]
       # files: ["."]
 
-    - linter: [golangci-lint]
+    - tool: [golangci-lint]
       # version: ["1.43"]
       # workdir: [""]
       # config: [""]

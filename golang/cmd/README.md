@@ -11,10 +11,10 @@ tools:
       template: |-
         {{- include "golang.cmd.ctr" . -}}
 
-      include@:
+      include:
       # required templates dependency
-      - __@http:presets#cached-file?str: templates/image/flavored-tag.tpl
-      - __@http:presets#cached-file?str: golang/cmd/ctr.yml
+      - text@http:presets?str: templates/image/flavored-tag.tpl
+      - text@http:presets?str: golang/cmd/ctr.yml
 
       variables:
         # golang toolchain version

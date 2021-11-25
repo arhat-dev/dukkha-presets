@@ -20,7 +20,7 @@ golang:build:
       {{- include "golang.build.cmd" . -}}
 
     include:
-    - __@http:presets#cached-file: golang/build/cmd.yml
+    - text@http:presets?str: golang/build/cmd.yml
 
     variables:
       # Set module name for your project (used by ldflags)

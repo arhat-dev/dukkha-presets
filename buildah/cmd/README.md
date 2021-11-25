@@ -11,8 +11,8 @@ tools:
       template: |-
         {{- include "buildah.cmd.ctr" . -}}
 
-      include@:
-      - __@http:presets#cached-file?str: buildah/cmd/ctr.yml
+      include:
+      - text@http:presets?str: buildah/cmd/ctr.yml
 
       variables:
         # buildah version
