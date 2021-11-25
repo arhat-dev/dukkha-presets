@@ -6,6 +6,10 @@ kernel:
 - openbsd
 arch:
 - arm64
+- amd64v4
+- amd64v3
+- amd64v2
+- amd64v1 # alias of amd64
 - amd64
 - armv7
 - armv6
@@ -17,12 +21,21 @@ include:
   - darwin
   arch:
   - arm64
+  - amd64v4
+  - amd64v3
+  - amd64v2
+  - amd64v1 # alias of amd64
   - amd64
 
 - kernel:
   - solaris
   - dragonfly
-  arch: [amd64]
+  arch:
+  - amd64v4
+  - amd64v3
+  - amd64v2
+  - amd64v1 # alias of amd64
+  - amd64
 
 - kernel:
   - openbsd
