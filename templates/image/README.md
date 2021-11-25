@@ -12,36 +12,6 @@ Generate `images_names` for
 
 and maybe more in future...
 
-### Output
-
-By default, add:
-
-```yaml
-- image: `{image_repo}/{app}:{version}-{kernel}-{arch}`
-  manifest: `{image_repo}/app:{version}`
-```
-
-When latest evaluated as `true`, add:
-
-```yaml
-- image: `{image_repo}/{app}:latest-{kernel}-{arch}`
-  manifest: `{image_repo}/app:latest`
-```
-
-When set_major evaluated as `true`, add:
-
-```yaml
-- image: `{image_repo}/{app}:{version major}-{kernel}-{arch}`
-  manifest: `{image_repo}/app:{version major}`
-```
-
-When version contains multiple dot separated parts, add
-
-```yaml
-- image: `{image_repo}/{app}:{version major}.{version minor}-{kernel}-{arch}`
-  manifest: `{image_repo}/app:{version major}.{version minor}`
-```
-
 ### Usage
 
 ```yaml
@@ -81,4 +51,37 @@ buildah:build:
       #
       # Defaults to true when env.GIT_BRANCH is the same as env.GIT_DEFAULT_BRANCH
       latest: true
+
+      # Add extra suffix to manifest name
+      manifest_suffix: ""
+```
+
+### Output
+
+By default, will add:
+
+```yaml
+- image: `{image_repo}/{app}:{version}-{kernel}-{arch}`
+  manifest: `{image_repo}/app:{version}`
+```
+
+When latest evaluated as `true`, add:
+
+```yaml
+- image: `{image_repo}/{app}:latest-{kernel}-{arch}`
+  manifest: `{image_repo}/app:latest`
+```
+
+When set_major evaluated as `true`, add:
+
+```yaml
+- image: `{image_repo}/{app}:{version major}-{kernel}-{arch}`
+  manifest: `{image_repo}/app:{version major}`
+```
+
+When version contains multiple dot separated parts, add
+
+```yaml
+- image: `{image_repo}/{app}:{version major}.{version minor}-{kernel}-{arch}`
+  manifest: `{image_repo}/app:{version major}.{version minor}`
 ```

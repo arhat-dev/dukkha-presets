@@ -1,7 +1,7 @@
 {{- define "image.names" -}}
 
 {{- $base_name := var.base_name -}}
-
+{{- $manifest_suffix := var.manifest_suffix | default "" -}}
 {{- $kernel := var.kernel
       | default matrix.kernel
       | default env.HOST_KERNEL
@@ -58,21 +58,21 @@
 
 {{- /* always generate a image name with full version */ -}}
 - image: {{ $base_name }}:{{ $version }}-{{ $kernel }}-{{ $arch }}
-  manifest: {{ $base_name }}:{{ $version }}
+  manifest: {{ $base_name }}:{{ $version }}{{ $manifest_suffix }}
 
 {{- if $set_major }}
 - image: {{ $base_name }}:{{ $version_major }}-{{ $kernel }}-{{ $arch }}
-  manifest: {{ $base_name }}:{{ $version_major }}
+  manifest: {{ $base_name }}:{{ $version_major }}{{ $manifest_suffix }}
 {{- end }}
 
 {{- if $version_minor }}
 - image: {{ $base_name }}:{{ $version_major }}.{{ $version_minor }}-{{ $kernel }}-{{ $arch }}
-  manifest: {{ $base_name }}:{{ $version_major }}.{{ $version_minor }}
+  manifest: {{ $base_name }}:{{ $version_major }}.{{ $version_minor }}{{ $manifest_suffix }}
 {{- end }}
 
 {{- if $latest }}
 - image: {{ $base_name }}:latest-{{ $kernel }}-{{ $arch }}
-  manifest: {{ $base_name }}:latest
+  manifest: {{ $base_name }}:latest{{ $manifest_suffix }}
 {{- end }}
 
 {{- end -}}
