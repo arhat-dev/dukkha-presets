@@ -2,7 +2,7 @@
 
 {{- $version := var.version | default "1.43" -}}
 {{- $config := var.config | default "" -}}
-{{- $args := var.args | default (strings.Split "," "--fix") -}}
+{{- $args := var.args | default (strings.Split "," "--fix,--color,always") -}}
 {{- $packages := var.packages | default (strings.Split "," "./...") -}}
 {{- $image := var.image | default (
       printf "ghcr.io/arhat-dev/golangci-lint:%s" $version
