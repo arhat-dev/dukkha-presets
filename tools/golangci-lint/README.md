@@ -20,8 +20,11 @@ foo@tpl#use-spec:
 
     # extra args to golangci run
     #
-    # Defaults to ["--fix"]
-    args: ["--fix"]
+    # Defaults to ["--fix", "--color", "always"]
+    args:
+    - --fix
+    - --color
+    - always
 
     # config of golangci-lint
     #
