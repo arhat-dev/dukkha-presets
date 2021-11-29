@@ -69,6 +69,7 @@ linters-settings:
     - unreachable
     - unsafeptr
     - unusedresult
+
   misspell:
     locale: US
   unused:
@@ -96,6 +97,7 @@ issues:
     - maligned
     - lll
     - scopelint
+    - goconst
 
   - text: "commentFormatting: put a space between `//` and comment text"
     linters:
