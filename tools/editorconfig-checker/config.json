@@ -6,6 +6,8 @@
   "NoColor": false,
   "Exclude": [
     "\\.git/.*",
+    "\\.idea/.*",
+    "\\.vscode/.*",
     "private/.*",
     "vendor/.*",
     "generated/.*",
