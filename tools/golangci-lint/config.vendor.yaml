@@ -103,6 +103,7 @@ issues:
     - maligned
     - lll
     - scopelint
+    - goconst
 
   - path: docs/generated
     linters:
