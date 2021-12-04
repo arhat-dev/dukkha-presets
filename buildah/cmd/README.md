@@ -30,9 +30,9 @@ tools:
 
         # switch workdir in container
         #
-        # MUST be inside env.DUKKHA_WORKDIR
+        # MUST be inside dukkha.WorkDir
         #
-        # Defaults to env.DUKKHA_WORKDIR
+        # Defaults to dukkha.WorkDir
         workdir: ""
 
         # volume name or absolute path for image & container storage

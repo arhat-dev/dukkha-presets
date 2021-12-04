@@ -53,7 +53,7 @@ workflow:run:
       # pkgs: ["./..."]
 
       workdir@tpl: |-
-        - {{ filepath.Join env.DUKKHA_WORKDIR "golang/testdata" -}}
+        - {{ filepath.Join dukkha.WorkDir "golang/testdata" -}}
       config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:

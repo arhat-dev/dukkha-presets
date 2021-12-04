@@ -4,13 +4,13 @@
 {{- $manifest_suffix := var.manifest_suffix | default "" -}}
 {{- $kernel := var.kernel
       | default matrix.kernel
-      | default env.HOST_KERNEL
+      | default host.Kernel
       | default "linux"
 -}}
 
 {{- $arch := var.arch
       | default matrix.arch
-      | default env.HOST_ARCH
+      | default host.Arch
       | default "amd64"
 -}}
 

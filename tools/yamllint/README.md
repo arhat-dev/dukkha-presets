@@ -15,7 +15,7 @@ cmd@tpl:
 
     # workdir when running yamllint
     #
-    # Defaults to env.DUKKHA_WORKDIR
+    # Defaults to dukkha.WorkDir
     workdir: ""
 
     # cmd list to run container, so we can run yamllint

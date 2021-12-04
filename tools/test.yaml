@@ -56,7 +56,7 @@ workflow:run:
     - &add_fake_bin_path
       name: PATH
       value@tpl: |-
-        {{- filepath.Join env.DUKKHA_WORKDIR "tools" "testdata" "bin" -}}:{{ env.PATH }}
+        {{- filepath.Join dukkha.WorkDir "tools" "testdata" "bin" -}}:{{ env.PATH }}
     shell@env: *render
 
   - name: Local first, fallback to ctr

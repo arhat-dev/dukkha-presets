@@ -12,19 +12,23 @@
     | default (strings.Split "," "docker,run,--rm,-t")
 -}}
 
-  {{- range $_, $v := $run_ctr }}
-- "{{ $v }}"
-  {{- end }}
+{{- range $_, $v := $run_ctr }}
+- |-
+    {{ $v }}
+{{- end }}
 
 - -v
-- "{{- env.DUKKHA_WORKDIR -}}:{{- env.DUKKHA_WORKDIR -}}"
+- |-
+    {{ dukkha.WorkDir -}}:{{- dukkha.WorkDir }}
 - -w
-- "{{- var.workdir | default env.DUKKHA_WORKDIR -}}"
+- |-
+    {{ var.workdir | default dukkha.WorkDir }}
 - -e
 - SONAR_HOST_URL
 - -e
 - SONAR_TOKEN
-- "{{ $image }}"
+- |-
+    {{ $image }}
 - sonar-scanner
 
 {{- $has_project_base_dir_flag := false }}
@@ -41,7 +45,7 @@
 
 {{- if not $has_project_base_dir_flag }}
 - -D
-- sonar.projectBaseDir={{ var.workdir | default env.DUKKHA_WORKDIR }}
+- sonar.projectBaseDir={{ var.workdir | default dukkha.WorkDir }}
 {{- end -}}
 
 {{- end -}}

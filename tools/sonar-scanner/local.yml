@@ -29,16 +29,18 @@
 {{- $has_project_base_dir_flag := false }}
 {{- range $_, $v := $args }}
 
-{{- if not $has_project_base_dir_flag }}
-  {{- $has_project_base_dir_flag = strings.HasPrefix "sonar.projectBaseDir" $v }}
-{{- end }}
+  {{- if not $has_project_base_dir_flag }}
+    {{- $has_project_base_dir_flag = strings.HasPrefix "sonar.projectBaseDir" $v }}
+  {{- end }}
 
-- {{ $v }}
+- |-
+    {{ $v }}
+
 {{- end }}
 
 {{- if not $has_project_base_dir_flag }}
 - -D
-- sonar.projectBaseDir={{ var.workdir | default env.DUKKHA_WORKDIR }}
+- sonar.projectBaseDir={{ var.workdir | default dukkha.WorkDir }}
 {{- end }}
 
 {{- end -}}
