@@ -10,8 +10,8 @@
 
 {{- $module_name = $module_name | default "." -}}
 
-{{- $kernel := matrix.kernel | default env.HOST_KERNEL | default "linux" -}}
-{{- $arch := matrix.arch | default env.HOST_ARCH | default "amd64" -}}
+{{- $kernel := matrix.kernel | default host.Kernel | default "linux" -}}
+{{- $arch := matrix.arch | default host.Arch | default "amd64" -}}
 
 {{- $suffix := "" -}}
 {{- if eq $kernel "windows" -}}
@@ -35,7 +35,7 @@ ldflags:
 # - -X "{{- $module_name -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
 
 outputs:
-  {{- if and (eq $kernel env.HOST_KERNEL) (eq $arch env.HOST_ARCH) }}
+  {{- if and (eq $kernel host.Kernel) (eq $arch host.Arch) }}
 - {{ filepath.Join $output_dir (printf "%s%s" $cmd $suffix) }}
   {{- end }}
 - {{ filepath.Join $output_dir (printf "%s.%s.%s%s" $cmd $kernel $arch $suffix) }}

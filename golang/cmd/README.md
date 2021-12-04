@@ -24,7 +24,7 @@ tools:
 
         # CPU arch of the machine running this command
         #
-        # Defaults to env.HOST_ARCH first, then amd64
+        # Defaults to host.Arch first, then amd64
         host_arch: ""
 
         # target CPU arch
@@ -38,9 +38,9 @@ tools:
         #
         run_ctr:
 
-        # switch to directory different from env.DUKKHA_WORKDIR
+        # switch to directory different from dukkha.WorkDir
         #
-        # MUST be inside env.DUKKHA_WORKDIR
+        # MUST be inside dukkha.WorkDir
         workdir: ""
 
         # Custom golang image name

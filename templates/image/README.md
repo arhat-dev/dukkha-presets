@@ -26,10 +26,10 @@ buildah:build:
     variables:
       base_name: example.com/my-repo/my-app
 
-      # Defaults to matrix.kernel first, then env.HOST_KERNEL, finally linux
+      # Defaults to matrix.kernel first, then host.Kernel, finally linux
       kernel: linux
 
-      # Defaults to matrix.arch first, then env.HOST_ARCH, finally amd64
+      # Defaults to matrix.arch first, then host.Arch, finally amd64
       arch: amd64
 
       # Version should follow semantic versioning style (prefix `v` will be trimed)

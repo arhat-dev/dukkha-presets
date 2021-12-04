@@ -19,7 +19,7 @@ tools:
         flavor@env: ${FLAVOR}
         volume: dukkha-preset
         workdir@tpl: |-
-          {{- filepath.Join env.DUKKHA_WORKDIR "golang" "testdata" -}}
+          {{- filepath.Join dukkha.WorkDir "golang" "testdata" -}}
         run_ctr@env: ${RUN_CTR}
 
 # we are using virtual key for task (which is a inline map in dukkha)
