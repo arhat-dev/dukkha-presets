@@ -38,9 +38,9 @@ tools:
         #
         run_ctr:
 
-        # switch to directory different from env.DUKKHA_WORKING_DIR
+        # switch to directory different from env.DUKKHA_WORKDIR
         #
-        # MUST be inside env.DUKKHA_WORKING_DIR
+        # MUST be inside env.DUKKHA_WORKDIR
         workdir: ""
 
         # Custom golang image name

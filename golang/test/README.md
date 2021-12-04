@@ -40,7 +40,7 @@ golang:test:
       profile_dir@tpl: |-
         {{- env.PROFILE_DIR -}}
 
-      # package to test, should be relative path to DUKKHA_WORKING_DIR
+      # package to test, should be relative path to DUKKHA_WORKDIR
       #
       # Defaults to matrix.pkg first, then ""
       pkg: ""

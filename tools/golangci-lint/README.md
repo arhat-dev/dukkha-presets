@@ -38,7 +38,7 @@ foo@tpl#use-spec:
 
     # workdir when running golangci-lint
     #
-    # Defaults to env.DUKKHA_WORKING_DIR
+    # Defaults to env.DUKKHA_WORKDIR
     workdir: ""
 
     # cmd list to run container, so we can run golangci-lint
