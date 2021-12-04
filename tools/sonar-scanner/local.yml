@@ -38,7 +38,7 @@
 
 {{- if not $has_project_base_dir_flag }}
 - -D
-- sonar.projectBaseDir={{ var.workdir | default env.DUKKHA_WORKING_DIR }}
+- sonar.projectBaseDir={{ var.workdir | default env.DUKKHA_WORKDIR }}
 {{- end }}
 
 {{- end -}}

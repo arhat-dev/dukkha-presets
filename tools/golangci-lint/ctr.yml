@@ -19,9 +19,9 @@
 {{- end }}
 
 - -v
-- "{{- env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR -}}"
+- "{{- env.DUKKHA_WORKDIR -}}:{{- env.DUKKHA_WORKDIR -}}"
 - -w
-- "{{- var.workdir | default env.DUKKHA_WORKING_DIR -}}"
+- "{{- var.workdir | default env.DUKKHA_WORKDIR -}}"
 - "{{ $image }}"
 - golangci-lint
 - run

@@ -41,10 +41,10 @@
   {{- end }}
 
 - --workdir
-- {{ var.workdir | default env.DUKKHA_WORKING_DIR }}
+- {{ var.workdir | default env.DUKKHA_WORKDIR }}
 
 - -v
-- {{ env.DUKKHA_WORKING_DIR -}}:{{- env.DUKKHA_WORKING_DIR }}
+- {{ env.DUKKHA_WORKDIR -}}:{{- env.DUKKHA_WORKDIR }}
 
 {{- /* start of go language specific settings */}}
 

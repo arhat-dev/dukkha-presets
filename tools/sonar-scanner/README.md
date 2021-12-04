@@ -20,7 +20,7 @@ cmd@tpl:
 
     # workdir when running sonar-scanner
     #
-    # Defaults to env.DUKKHA_WORKING_DIR
+    # Defaults to env.DUKKHA_WORKDIR
     workdir: ""
 
     # cmd list to run container, so we can run sonar-scanner

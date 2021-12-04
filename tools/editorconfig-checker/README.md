@@ -26,7 +26,7 @@ foo@tpl:
     # workdir in container when running editorconfig-checker
     # MUST be absolute path
     #
-    # Defaults to env.DUKKHA_WORKING_DIR
+    # Defaults to env.DUKKHA_WORKDIR
     workdir: ""
 
     # cmd list to run container, so we can run editorconfig-checker
