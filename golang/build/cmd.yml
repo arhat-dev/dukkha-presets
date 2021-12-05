@@ -10,8 +10,8 @@
 
 {{- $module_name = $module_name | default "." -}}
 
-{{- $kernel := matrix.kernel | default host.Kernel | default "linux" -}}
-{{- $arch := matrix.arch | default host.Arch | default "amd64" -}}
+{{- $kernel := matrix.kernel | default host.kernel | default "linux" -}}
+{{- $arch := matrix.arch | default host.arch | default "amd64" -}}
 
 {{- $suffix := "" -}}
 {{- if eq $kernel "windows" -}}
@@ -25,17 +25,17 @@ path: ./cmd/{{ $cmd }}
 
 ldflags:
 - -s -w
-- -X "{{- $module_name -}}/pkg/version.branch={{- env.GIT_BRANCH -}}"
-- -X "{{- $module_name -}}/pkg/version.commit={{- env.GIT_COMMIT -}}"
-- -X "{{- $module_name -}}/pkg/version.tag={{- env.GIT_TAG -}}"
+- -X "{{- $module_name -}}/pkg/version.branch={{- git.branch -}}"
+- -X "{{- $module_name -}}/pkg/version.commit={{- git.commit -}}"
+- -X "{{- $module_name -}}/pkg/version.tag={{- git.tag -}}"
 - -X "{{- $module_name -}}/pkg/version.arch={{- $arch -}}"
-- -X "{{- $module_name -}}/pkg/version.worktreeClean={{- env.GIT_WORKTREE_CLEAN -}}"
+- -X "{{- $module_name -}}/pkg/version.worktreeClean={{- git.worktree_clean -}}"
 - -X "{{- $module_name -}}/pkg/version.buildTime={{ now.UTC.Format "2006-01-02T15:04:05Z07:00" }}"
 # TODO
 # - -X "{{- $module_name -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
 
 outputs:
-  {{- if and (eq $kernel host.Kernel) (eq $arch host.Arch) }}
+  {{- if and (eq $kernel host.kernel) (eq $arch host.arch) }}
 - {{ filepath.Join $output_dir (printf "%s%s" $cmd $suffix) }}
   {{- end }}
 - {{ filepath.Join $output_dir (printf "%s.%s.%s%s" $cmd $kernel $arch $suffix) }}

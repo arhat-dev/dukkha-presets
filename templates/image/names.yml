@@ -4,20 +4,20 @@
 {{- $manifest_suffix := var.manifest_suffix | default "" -}}
 {{- $kernel := var.kernel
       | default matrix.kernel
-      | default host.Kernel
+      | default host.kernel
       | default "linux"
 -}}
 
 {{- $arch := var.arch
       | default matrix.arch
-      | default host.Arch
+      | default host.arch
       | default "amd64"
 -}}
 
 {{- $version := var.version
       | default matrix.version
       | default env.VERSION
-      | default env.GIT_TAG
+      | default git.tag
       | default ""
       | strings.TrimPrefix "v"
 -}}
@@ -33,8 +33,8 @@
   */ -}}
 
   {{- $can_set_major = false -}}
-  {{- $version = env.GIT_BRANCH | strings.KebabCase
-      | default (env.GIT_COMMIT | substr 0 8)
+  {{- $version = git.branch | strings.KebabCase
+      | default (git.commit | substr 0 8)
       | default "unknown"
   -}}
 {{- end -}}
@@ -54,7 +54,7 @@
   {{- $set_major = var.set_major | default (ne $version_major "0") -}}
 {{- end -}}
 
-{{- $latest := var.latest | default (eq env.GIT_BRANCH env.GIT_DEFAULT_BRANCH) -}}
+{{- $latest := var.latest | default (eq git.branch git.default_branch) -}}
 
 {{- /* always generate a image name with full version */ -}}
 - image: {{ $base_name }}:{{ $version }}-{{ $kernel }}-{{ $arch }}

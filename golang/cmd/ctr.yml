@@ -1,7 +1,7 @@
 {{- define "golang.cmd.ctr" -}}
 
 {{- $version := var.version | default "1.17" -}}
-{{- $host_arch := default host.Arch var.host_arch | default "amd64" | trimSuffix "sf" -}}
+{{- $host_arch := default host.arch var.host_arch | default "amd64" | trimSuffix "sf" -}}
 {{- $flavor := var.flavor -}}
 {{- if not $flavor -}}
   {{- if eq env.CGO_ENABLED "1" "true" -}}

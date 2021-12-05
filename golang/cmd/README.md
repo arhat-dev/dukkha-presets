@@ -24,7 +24,7 @@ tools:
 
         # CPU arch of the machine running this command
         #
-        # Defaults to host.Arch first, then amd64
+        # Defaults to host.arch first, then amd64
         host_arch: ""
 
         # target CPU arch
