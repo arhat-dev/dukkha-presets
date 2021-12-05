@@ -16,6 +16,9 @@ renderers:
 - env:
     enable_exec: true
 
+  file:presets:
+    alias: presets
+
 workflow:run:
 - name: test
   matrix:
@@ -57,6 +60,6 @@ workflow:run:
       config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:
-  - cmd@file|tpl#use-spec: tools/file.tpl
+  - cmd@file|tpl#use-spec: tools/presets.tpl
     chdir@tpl: |-
       {{- matrix.workdir | default "" -}}
