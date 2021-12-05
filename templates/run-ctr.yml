@@ -4,7 +4,7 @@ description: Generate list of strings to run container
 
 usage:
   foo@tpl#use-spec:
-    template@http:presets?str: templates/run-ctr.yml
+    template@presets?str: templates/run-ctr.yml
     variables:
       # preferred tool lookup order
       #

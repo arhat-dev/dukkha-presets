@@ -13,8 +13,8 @@ tools:
 
       include:
       # required templates dependency
-      - text@http:presets?str: templates/image/flavored-tag.tpl
-      - text@http:presets?str: golang/cmd/ctr.yml
+      - text@presets?str: templates/image/flavored-tag.tpl
+      - text@presets?str: golang/cmd/ctr.yml
 
       variables:
         # golang toolchain version

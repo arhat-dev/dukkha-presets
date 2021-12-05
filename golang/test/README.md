@@ -31,7 +31,7 @@ golang:test:
     template: |-
       {{- include "golang.test.pkg" . -}}
     include:
-    - text@http:presets?str: golang/test/pkg.yml
+    - text@presets?str: golang/test/pkg.yml
 
     variables:
       # Directory to write profile generated during test

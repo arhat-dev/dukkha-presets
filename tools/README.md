@@ -36,7 +36,7 @@ workflow:run:
       # packages: ["./..."]
 
   jobs:
-  - cmd@http:presets|tpl#use-spec: tools/http.tpl
+  - cmd@presets|tpl#use-spec: tools/http.tpl
     chdir@tpl: |-
       {{- matrix.workdir | default "" -}}
 ```
