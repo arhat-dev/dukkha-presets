@@ -9,7 +9,7 @@ mark_todo() {
   tpl:dukkha.SetValue "\"${1}\"" '"todo"' >/dev/null 2>&1
 }
 
-key="Values.${PRESET}.in_ctr.podman"
+key="values.${PRESET}.in_ctr.podman"
 
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.podman"
@@ -19,7 +19,7 @@ if [[ "${!key}" != "done" ]]; then
   fi
 fi
 
-key="Values.${PRESET}.in_ctr.nerdctl"
+key="values.${PRESET}.in_ctr.nerdctl"
 
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.nerdctl"
@@ -29,7 +29,7 @@ if [[ "${!key}" != "done" ]]; then
   fi
 fi
 
-key="Values.${PRESET}.in_ctr.limactl"
+key="values.${PRESET}.in_ctr.limactl"
 
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.limactl"
@@ -39,7 +39,7 @@ if [[ "${!key}" != "done" ]]; then
   fi
 fi
 
-key="Values.${PRESET}.in_ctr.docker"
+key="values.${PRESET}.in_ctr.docker"
 
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.docker"
