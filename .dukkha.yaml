@@ -6,7 +6,7 @@ include:
 global:
   values:
     cmd:
-      run_ctr@file|tpl: templates/run-ctr.yml
+      run_ctr@presets|tpl: templates/run-ctr.yml
 
 tools:
   workflow:
@@ -55,11 +55,12 @@ workflow:run:
       # config: [""]
       # pkgs: ["./..."]
 
-      workdir@tpl: |-
-        - {{ filepath.Join dukkha.WorkDir "golang/testdata" -}}
+      workdir:
+      - __@tpl: |-
+          {{- filepath.Join dukkha.WorkDir "golang/testdata" -}}
       config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:
-  - cmd@file|tpl#use-spec: tools/presets.tpl
+  - cmd@presets|tpl#use-spec: tools/presets.tpl
     chdir@tpl: |-
       {{- matrix.workdir | default "" -}}

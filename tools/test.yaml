@@ -21,6 +21,8 @@ workflow:run:
 
   jobs:
   - name: ctr
+    if@tpl: &is_linux |-
+      {{- eq host.kernel "linux" | toString -}}
     env:
     - name: kind
       value: ctr
@@ -37,8 +39,8 @@ workflow:run:
           {{- include "tools.${MATRIX_TOOL}.${kind}" . -}}
 
         include:
-        - text@tpl|file?str: |-
-            {{- filepath.Join "tools" "${MATRIX_TOOL}" "${kind}.yml" -}}
+        - text@tpl|presets?str: |-
+            {{- path.Join "tools" "${MATRIX_TOOL}" "${kind}.yml" -}}
 
         variables:
           version: ${MATRIX_VERSION}
@@ -60,6 +62,8 @@ workflow:run:
     shell@env: *render
 
   - name: Local first, fallback to ctr
+    if@tpl: &is_linux |-
+      {{- eq host.kernel "linux" | toString -}}
     env:
     - *dukkha_only_path
     - *add_fake_bin_path
@@ -69,8 +73,8 @@ workflow:run:
           {{- include (printf "tools.%s.local" matrix.tool) . -}}
 
         include:
-        - text@tpl|file?str: |-
-            {{- filepath.Join "tools" matrix.tool "local.yml" -}}
+        - text@tpl|presets?str: |-
+            {{- path.Join "tools" matrix.tool "local.yml" -}}
 
         variables@env:
           version: ${MATRIX_VERSION}
@@ -81,7 +85,7 @@ workflow:run:
       ops:
       - template@tpl?str: |-
           {{- if or (eq VALUE "null") (not VALUE) -}}
-            echo {{ filepath.Join "tools" matrix.tool "ctr.yml" -}}
+            echo {{ path.Join "tools" matrix.tool "ctr.yml" -}}
           {{- else -}}
-            echo {{ filepath.Join "meta" "VALUE.yml" -}}
+            echo {{ path.Join "meta" "VALUE.yml" -}}
           {{- end -}}
