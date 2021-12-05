@@ -18,7 +18,8 @@
     ".*\\.rar.*",
     "target/.*",
     ".*doc.go",
-    "testdata.*"
+    "testdata.*",
+    "\\.DS_Store"
   ],
   "AllowedContentTypes": [],
   "Disable": {
