@@ -26,19 +26,19 @@ buildah:build:
     variables:
       base_name: example.com/my-repo/my-app
 
-      # Defaults to matrix.kernel first, then host.Kernel, finally linux
+      # Defaults to matrix.kernel first, then host.kernel, finally linux
       kernel: linux
 
-      # Defaults to matrix.arch first, then host.Arch, finally amd64
+      # Defaults to matrix.arch first, then host.arch, finally amd64
       arch: amd64
 
       # Version should follow semantic versioning style (prefix `v` will be trimed)
       #
       # Defaults to matrix.version first
       #       then env.VERSION
-      #       then env.GIT_TAG
-      #       then env.GIT_BRANCH (normalized as kebab-case)
-      #       then env.GIT_COMMIT[0:8]
+      #       then git.tag
+      #       then git.branch (normalized as kebab-case)
+      #       then git.commit[0:8]
       #       finally "unknown"
       version: "1.0.1"
 
@@ -49,7 +49,7 @@ buildah:build:
 
       # Add image name with tag latest
       #
-      # Defaults to true when env.GIT_BRANCH is the same as env.GIT_DEFAULT_BRANCH
+      # Defaults to true when git.branch is the same as git.default_branch
       latest: true
 
       # Add extra suffix to manifest name

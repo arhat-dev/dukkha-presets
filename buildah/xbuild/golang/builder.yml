@@ -3,8 +3,8 @@
 ref@tpl: |-
   {{- $flavor := env.BUILDER_FLAVOR | default "native" -}}
   {{- $ver := env.GO_VERSION | default "1.17" -}}
-  {{- $arch := trimSuffix "sf" (default host.Arch matrix.arch) -}}
-  {{- $host_arch := trimSuffix "sf" (default "amd64" host.Arch) -}}
+  {{- $arch := trimSuffix "sf" (default host.arch matrix.arch) -}}
+  {{- $host_arch := trimSuffix "sf" (default "amd64" host.arch) -}}
 
   {{- /* assume it's cgo build so we can produce image tag correctly (for cross env) */ -}}
   {{- $cgo := true -}}
@@ -20,7 +20,7 @@ ref@tpl: |-
 
   {{- else if eq $flavor "cross" "alpine-cross" -}}
 
-    {{- $host_arch := host.Arch -}}
+    {{- $host_arch := host.arch -}}
     {{- if and
               (and $cgo (ne $host_arch $arch))
               (not (eq $host_arch "amd64")) -}}
@@ -40,7 +40,7 @@ ref@tpl: |-
 
   {{- else if eq $flavor "debian-cross" -}}
 
-    {{- $host_arch := host.Arch -}}
+    {{- $host_arch := host.arch -}}
     {{- if and
               (and $cgo (ne $host_arch $arch))
               (not (eq $host_arch "amd64" "arm64")) -}}
