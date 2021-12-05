@@ -12,7 +12,7 @@ tools:
         {{- include "buildah.cmd.ctr" . -}}
 
       include:
-      - text@http:presets?str: buildah/cmd/ctr.yml
+      - text@presets?str: buildah/cmd/ctr.yml
 
       variables:
         # buildah version

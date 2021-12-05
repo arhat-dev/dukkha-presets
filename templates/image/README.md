@@ -22,7 +22,7 @@ buildah:build:
       {{- include "image.names" . -}}
 
     include:
-    - text@http:presets?str: templates/image/names.yml
+    - text@presets?str: templates/image/names.yml
     variables:
       base_name: example.com/my-repo/my-app
 

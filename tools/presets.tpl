@@ -7,10 +7,10 @@ template: |-
   {{- $cmd -}}
 
 include:
-- text@tpl|file?str: |-
-    {{- filepath.Join "tools" matrix.tool "local.yml" -}}
-- text@tpl|file?str: |-
-    {{- filepath.Join "tools" matrix.tool "ctr.yml" -}}
+- text@tpl|presets?str: |-
+    {{- path.Join "tools" matrix.tool "local.yml" -}}
+- text@tpl|presets?str: |-
+    {{- path.Join "tools" matrix.tool "ctr.yml" -}}
 
 variables:
   version@tpl?str: |-

@@ -8,15 +8,16 @@ Shared `dukkha` config recipes for `arhat-dev`
 
 ```yaml
 renderers:
-  # (required) add renderer `http:presets`
-  http:presets:
+- http:presets:
+    # (required) renderer `presets`
+    alias: presets
     # set base url of dukkha-presets
     #
     # NOTE: select branch for your own use case (in this case we use `master` branch)
     base_url: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master
 ```
 
-__NOTE:__ jsdelivr may cache old content, to always fetch latest content, use github raw: [https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master](https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master)
+__NOTE:__ jsdelivr may cache content for a long time, to fetch latest content, use github raw: `https://raw.githubusercontent.com/arhat-dev/dukkha-presets/master`
 
 ## Convensions
 
