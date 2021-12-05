@@ -1,7 +1,7 @@
 include:
-- buildah/test.yaml
-- golang/test.yaml
-- tools/test.yaml
+- path: buildah/test.yaml
+- path: golang/test.yaml
+- path: tools/test.yaml
 
 global:
   values:
