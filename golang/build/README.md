@@ -29,6 +29,7 @@ golang:build:
       module_name: ""
 
       # Directory to store artifacts
+      # MUST be in unix path style
       #
       # Defaults to `build`
       output_dir: ""

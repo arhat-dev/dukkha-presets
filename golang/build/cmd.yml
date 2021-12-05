@@ -36,8 +36,8 @@ ldflags:
 
 outputs:
   {{- if and (eq $kernel host.kernel) (eq $arch host.arch) }}
-- {{ filepath.Join $output_dir (printf "%s%s" $cmd $suffix) }}
+- {{ path.Join $output_dir (printf "%s%s" $cmd $suffix) }}
   {{- end }}
-- {{ filepath.Join $output_dir (printf "%s.%s.%s%s" $cmd $kernel $arch $suffix) }}
+- {{ path.Join $output_dir (printf "%s.%s.%s%s" $cmd $kernel $arch $suffix) }}
 
 {{- end -}}

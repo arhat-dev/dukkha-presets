@@ -22,3 +22,15 @@ jobs:
     uses: arhat-dev/dukkha-presets/.github/workflows/stylecheck.yml@master
   test:
     uses: arhat-dev/dukkha-presets/.github/workflows/test.yml@master
+    with:
+      matrix: |-
+        {
+          "os": [
+            "macos-latest",
+            "windows-latest",
+            "ubuntu-latest"
+          ],
+          "go": [
+            "1.17.x"
+          ]
+        }
