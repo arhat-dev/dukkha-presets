@@ -37,7 +37,8 @@ workflow:run:
     - tool: [editorconfig-checker]
       # version: ["2.3"]
       # workdir: [""]
-      # config: [".ecrc"]
+      config:
+      - __@presets#cached-file: tools/editorconfig-checker/config.json
 
     # TODO
     - tool: [shellcheck]
@@ -47,7 +48,9 @@ workflow:run:
     - tool: [yamllint]
       # version: ["1.26"]
       # workdir: [""]
-      # config: [".yaml-lint.yml"]
+      # TODO: merge yamllint config for this repo
+      # config:
+      # - __@presets#cached-file: tools/yamllint/config.yaml
 
     - tool: [golangci-lint]
       # version: ["1.43"]
