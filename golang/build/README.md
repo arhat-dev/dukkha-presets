@@ -23,11 +23,6 @@ golang:build:
     - text@presets?str: golang/build/cmd.yml
 
     variables:
-      # Set module name for your project (used by ldflags)
-      #
-      # Defaults to output value of `go list -m` first, then "."
-      module_name: ""
-
       # Directory to store artifacts
       # MUST be in unix path style
       #

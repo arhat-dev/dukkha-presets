@@ -1,15 +1,5 @@
 {{- define "golang.build.cmd" -}}
 
-{{- $module_name := var.module_name -}}
-{{- if not $module_name -}}
-  {{- $module_name = eval.Shell "go list -m || true"
-      | strings.TrimSpace
-      | strings.TrimPrefix "command-line-arguments"
-  -}}
-{{- end -}}
-
-{{- $module_name = $module_name | default "." -}}
-
 {{- $kernel := matrix.kernel | default host.kernel | default "linux" -}}
 {{- $arch := matrix.arch | default host.arch | default "amd64" -}}
 
@@ -25,14 +15,14 @@ path: ./cmd/{{ $cmd }}
 
 ldflags:
 - -s -w
-- -X "{{- $module_name -}}/pkg/version.branch={{- git.branch -}}"
-- -X "{{- $module_name -}}/pkg/version.commit={{- git.commit -}}"
-- -X "{{- $module_name -}}/pkg/version.tag={{- git.tag -}}"
-- -X "{{- $module_name -}}/pkg/version.arch={{- $arch -}}"
-- -X "{{- $module_name -}}/pkg/version.worktreeClean={{- git.worktree_clean -}}"
-- -X "{{- $module_name -}}/pkg/version.buildTime={{ now.UTC.Format "2006-01-02T15:04:05Z07:00" }}"
+- -X "arhat.dev/pkg/versionhelper.branch={{- git.branch -}}"
+- -X "arhat.dev/pkg/versionhelper.commit={{- git.commit -}}"
+- -X "arhat.dev/pkg/versionhelper.tag={{- git.tag -}}"
+- -X "arhat.dev/pkg/versionhelper.arch={{- $arch -}}"
+- -X "arhat.dev/pkg/versionhelper.worktreeClean={{- git.worktree_clean -}}"
+- -X "arhat.dev/pkg/versionhelper.buildTime={{ now.UTC.Format "2006-01-02T15:04:05Z07:00" }}"
 # TODO
-# - -X "{{- $module_name -}}/pkg/version.goCompilerPlatform=$(go version | cut -d\  -f4)"
+# - -X "arhat.dev/pkg/versionhelper.goCompilerPlatform=$(go version | cut -d\  -f4)"
 
 outputs:
   {{- if and (eq $kernel host.kernel) (eq $arch host.arch) }}
