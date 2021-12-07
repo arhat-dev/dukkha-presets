@@ -1,6 +1,6 @@
 # dukkha-presets
 
-[![CI](https://github.com/arhat-dev/template-repo/workflows/CI/badge.svg)](https://github.com/arhat-dev/template-repo/actions?query=workflow%3ACI)
+[![CI](https://github.com/arhat-dev/dukkha-presets/workflows/CI/badge.svg)](https://github.com/arhat-dev/dukkha-presets/actions?query=workflow%3ACI)
 
 Shared `dukkha` config recipes for `arhat-dev`
 
