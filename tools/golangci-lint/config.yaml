@@ -88,6 +88,21 @@ issues:
   - path: ./
     linters:
     - typecheck
+
+  # for libext-go
+  # https://github.com/arhat-dev/libext-go/runs/4479623778?check_suite_focus=true
+  - path: ./
+    text: string `pipe`
+    linters:
+    - goconst
+
+  # for libext-go
+  # https://github.com/arhat-dev/libext-go/runs/4479623778?check_suite_focus=true
+  - path: ./
+    text: string `windows`
+    linters:
+    - goconst
+
   - path: _test\.go
     linters:
     - gocyclo
