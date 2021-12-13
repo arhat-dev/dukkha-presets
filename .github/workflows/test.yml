@@ -49,10 +49,16 @@ jobs:
         # disable shallow-clone
         fetch-depth: 0
 
-    - name: Install sonar-scanner
+    - name: Install wine (linux)
+      if: startsWith(matrix.os, 'ubuntu-')
+      run: |-
+        sudo apt-get install wine32 wine64
+
+    - name: Install sonar-scanner and wine (macos)
       if: startsWith(matrix.os, 'macos-')
       run: |-
         brew install sonar-scanner
+        brew install --cask wine-stable
 
     - name: Install dukkha
       uses: arhat-dev/actions-setup-dukkha@master
