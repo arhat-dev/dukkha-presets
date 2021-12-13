@@ -49,12 +49,25 @@ jobs:
         # disable shallow-clone
         fetch-depth: 0
 
+    - name: Add winehq repo (ubuntu-20.04)
+      if: startsWith(matrix.os, 'ubuntu-20.04') || startsWith(matrix.os, 'ubuntu-latest')
+      run: |-
+        wget -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/Release.key -O Release.key -O- | sudo apt-key add -
+        sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/ ./'
+
+    - name: Install wine (linux)
+      if: startsWith(matrix.os, 'ubuntu-18.04')
+      run: |-
+        wget -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/Release.key -O Release.key -O- | sudo apt-key add -
+        sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/ ./'
+
     - name: Install wine (linux)
       if: startsWith(matrix.os, 'ubuntu-')
       run: |-
         export DEBIAN_FRONTEND=noninteractive
+        sudo dpkg --add-architecture i386 || true
         sudo apt-get update
-        sudo apt-get install -y wine
+        sudo apt-get install -y --install-recommends wine-stable
 
     - name: Install sonar-scanner and wine (macos)
       if: startsWith(matrix.os, 'macos-')
