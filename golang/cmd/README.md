@@ -19,8 +19,8 @@ tools:
       variables:
         # golang toolchain version
         #
-        # Defaults to "1.17"
-        version: "1.17"
+        # Defaults to "1.18"
+        version: "1.18"
 
         # CPU arch of the machine running this command
         #

@@ -1,7 +1,7 @@
 global:
   env:
   - name: GO_VERSION
-    value: "1.17"
+    value: "1.18"
 
 tools:
   golang:

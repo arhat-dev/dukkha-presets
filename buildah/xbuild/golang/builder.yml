@@ -2,7 +2,7 @@
 # treat BUILDER_FLAVOR as IMAGE_FLAVOR
 ref@tpl: |-
   {{- $flavor := env.BUILDER_FLAVOR | default "native" -}}
-  {{- $ver := env.GO_VERSION | default "1.17" -}}
+  {{- $ver := env.GO_VERSION | default "1.18" -}}
   {{- $arch := trimSuffix "sf" (default host.arch matrix.arch) -}}
   {{- $host_arch := trimSuffix "sf" (default "amd64" host.arch) -}}
 

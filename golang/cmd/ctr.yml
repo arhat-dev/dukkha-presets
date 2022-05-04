@@ -1,6 +1,6 @@
 {{- define "golang.cmd.ctr" -}}
 
-{{- $version := var.version | default "1.17" -}}
+{{- $version := var.version | default "1.18" -}}
 {{- $host_arch := default host.arch var.host_arch | default "amd64" | trimSuffix "sf" -}}
 {{- $flavor := var.flavor -}}
 {{- if not $flavor -}}

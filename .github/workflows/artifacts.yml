@@ -15,7 +15,7 @@ on:
         default: |-
           {
             "os": ["ubuntu-latest"],
-            "go": ["1.17.x"]
+            "go": ["1.18.x"]
           }
 
       release:
