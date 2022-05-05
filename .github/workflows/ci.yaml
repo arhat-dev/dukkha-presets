@@ -8,9 +8,11 @@ on:
         description: reason to run this workflow
         required: false
         default: test
+
   pull_request:
     branches:
     - master
+
   push:
     branches:
     - master
@@ -34,3 +36,4 @@ jobs:
             "1.18.x"
           ]
         }
+      install_wine: true

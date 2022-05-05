@@ -23,6 +23,11 @@ on:
         default: ""
         type: string
 
+      install_wine:
+        required: false
+        default: false
+        type: boolean
+
     secrets:
       sonarqube-token:
         required: false
@@ -49,30 +54,37 @@ jobs:
         # disable shallow-clone
         fetch-depth: 0
 
-    - name: Add winehq repo (ubuntu-20.04)
-      if: startsWith(matrix.os, 'ubuntu-20.04') || startsWith(matrix.os, 'ubuntu-latest')
+    - name: Add wine repo (ubuntu-20.04/latest)
+      if: (startsWith(matrix.os, 'ubuntu-20.04') || startsWith(matrix.os, 'ubuntu-latest')) && inputs.install_wine
       run: |-
         wget -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/Release.key -O Release.key -O- | sudo apt-key add -
         sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_20.04/ ./'
 
-    - name: Install wine (linux)
-      if: startsWith(matrix.os, 'ubuntu-18.04')
+    - name: Add wine repo (ubuntu-18.04)
+      if: startsWith(matrix.os, 'ubuntu-18.04') && inputs.install_wine
       run: |-
         wget -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/Release.key -O Release.key -O- | sudo apt-key add -
         sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_18.04/ ./'
 
-    - name: Install wine (linux)
-      if: startsWith(matrix.os, 'ubuntu-')
+    - name: Install wine (ubuntu)
+      if: startsWith(matrix.os, 'ubuntu-') && inputs.install_wine
       run: |-
         export DEBIAN_FRONTEND=noninteractive
         sudo dpkg --add-architecture i386 || true
         sudo apt-get update
-        sudo apt-get install -y --install-recommends wine-stable
+        sudo apt install -y aptitude
+        sudo aptitude install -y winehq-stable
 
-    - name: Install sonar-scanner and wine (macos)
+        # sudo apt-get install -y --install-recommends winehq-stable
+
+    - name: Install sonar-scanner (macos)
       if: startsWith(matrix.os, 'macos-')
       run: |-
         brew install sonar-scanner
+
+    - name: Install wine (macos)
+      if: startsWith(matrix.os, 'macos-') && inputs.install_wine
+      run: |-
         brew install --cask wine-stable
 
     - name: Install dukkha
