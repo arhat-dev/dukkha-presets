@@ -56,8 +56,8 @@ include:
   - mipslesf
   - mips
   - mipssf
-  - ppc64v9le
-  - ppc64v8le # alias of ppc64le
+  - ppc64lev9
+  - ppc64lev8 # alias of ppc64le
   - ppc64le
   - ppc64v9
   - ppc64v8 # alias of ppc64

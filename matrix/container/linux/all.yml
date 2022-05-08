@@ -11,8 +11,8 @@
 - armv5
 - mips64le
 - mips64lesf
-- ppc64v9le
-- ppc64v8le
+- ppc64lev9
+- ppc64lev8
 - ppc64le
 - s390x
 - x86
