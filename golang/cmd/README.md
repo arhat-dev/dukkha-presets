@@ -1,5 +1,7 @@
 # `tools.golang[*].cmd`
 
+Generate cmd list for `golang` tool
+
 ## Usage
 
 ### `ctr.yml`
@@ -24,7 +26,7 @@ tools:
 
         # CPU arch of the machine running this command
         #
-        # Defaults to host.arch first, then amd64
+        # Defaults to host.arch_simple first, then amd64
         host_arch: ""
 
         # target CPU arch

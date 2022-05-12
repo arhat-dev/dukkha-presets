@@ -1,107 +1,113 @@
 {{- define "image.flavored-tag" -}}
 
 {{- /*
+
 Required arguments
   .flavor
-  .host_arch
   .arch
+
+Optional arguments
+  .host_arch (defaults to host.arch_simple first, then "amd64")
+  .host_kernel (defaults to "linux")
+  .kernel (default to "linux")
+
 */ -}}
 
-{{- $flavor := .flavor -}}
-{{- $host_arch := .host_arch -}}
-{{- $arch := .arch -}}
+{{- $host_arch := .host_arch | default host.arch_simple | default "amd64" -}}
+{{- $host_arch_simple := $host_arch | archconv.SimpleArch -}}
+
+{{- $host_kernel := .host_kernel | default "linux" -}}
+{{- $kernel := .kernel | default "linux" -}}
+
+{{- $cross := dukkha.CrossPlatform $host_kernel $kernel $host_arch .arch -}}
+
+{{- $alpine_cross_unsupported := and
+                        $cross
+                        (not (eq $host_arch_simple "amd64")) -}}
+
+{{- $debian_cross_unsupported := and
+                        $cross
+                        (not (eq $host_arch_simple "amd64" "arm64")) -}}
 
 {{- $tag := "" -}}
 
-{{- if eq $flavor "" "native" "alpine-native" -}}
+{{- if eq .flavor "" "native" "alpine-native" -}}
 
   {{- $tag = "alpine" -}}
 
-{{- else if eq $flavor "debian-native" -}}
+{{- else if eq .flavor "debian-native" -}}
 
   {{- $tag = "debian" -}}
 
-{{- else if eq $flavor "cross" "alpine-cross" -}}
+{{- else if eq .flavor "cross" "alpine-cross" -}}
 
-  {{- if and
-            (ne $host_arch $arch)
-            (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4"))
-  -}}
+  {{- if $alpine_cross_unsupported -}}
 
-    {{- $host_arch = $arch -}}
+    {{- $host_arch = .arch -}}
 
   {{- end -}}
 
-  {{- if eq $arch "armv5" "mips64le" "mips64lesf" -}}
+  {{- if eq .arch "armv5" "mips64le" "mips64lesf" -}}
 
-    {{- if and
-              (ne $host_arch $arch)
-              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64"))
-    -}}
+    {{- if $debian_cross_unsupported -}}
 
-      {{- $host_arch = $arch -}}
+      {{- $host_arch = .arch -}}
 
     {{- end -}}
 
-    {{- $tag = printf "debian-%s-%s" $host_arch $arch -}}
+    {{- $tag = printf "debian-%s-%s" $host_arch .arch -}}
 
   {{- else -}}
 
-    {{- $tag = printf "alpine-%s-%s" $host_arch $arch -}}
+    {{- $tag = printf "alpine-%s-%s" $host_arch .arch -}}
 
   {{- end -}}
 
-{{- else if eq $flavor "debian-cross" -}}
+{{- else if eq .flavor "debian-cross" -}}
 
-  {{- if and
-            (ne $host_arch $arch)
-            (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64"))
-  -}}
+  {{- if $debian_cross_unsupported -}}
 
-    {{- $host_arch = $arch -}}
+    {{- $host_arch = .arch -}}
 
   {{- end -}}
 
-  {{- if eq $arch "armv6" -}}
+  {{- if eq .arch "armv6" -}}
 
-    {{- if and
-              (ne $host_arch $arch)
-              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4"))
-    -}}
+    {{- if $alpine_cross_unsupported -}}
 
-      {{- $host_arch = $arch -}}
+      {{- $host_arch = .arch -}}
 
     {{- end -}}
 
-    {{- $tag = printf "alpine-%s-%s" $host_arch $arch -}}
+    {{- $tag = printf "alpine-%s-%s" $host_arch .arch -}}
 
   {{- else -}}
 
-    {{- $tag = printf "debian-%s-%s" $host_arch $arch -}}
+    {{- $tag = printf "debian-%s-%s" $host_arch .arch -}}
 
   {{- end -}}
 
-{{- else if eq $flavor "qemu" "alpine-qemu" -}}
+{{- else if eq .flavor "qemu" "alpine-qemu" -}}
 
-  {{- if eq $arch "armv5" "mips64le" "mips64lesf" -}}
+  {{- if eq .arch "armv5" "mips64le" "mips64lesf" -}}
 
-    {{- $tag = printf "debian-%s" $arch -}}
+    {{- $tag = printf "debian-%s" .arch -}}
 
   {{- else -}}
 
-    {{- $tag = printf "alpine-%s" $arch -}}
+    {{- $tag = printf "alpine-%s" .arch -}}
 
   {{- end -}}
 
-{{- else if eq $flavor "debian-qemu" -}}
+{{- else if eq .flavor "debian-qemu" -}}
 
-  {{- if eq $arch "armv6" -}}
+  {{- if eq .arch "armv6" -}}
 
-    {{- $tag = printf "alpine-%s" $arch -}}
+    {{- $tag = printf "alpine-%s" .arch -}}
 
   {{- else -}}
 
-    {{- $tag = printf "debian-%s" $arch -}}
+    {{- $tag = printf "debian-%s" .arch -}}
 
   {{- end -}}
 

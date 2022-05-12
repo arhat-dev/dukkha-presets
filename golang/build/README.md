@@ -1,5 +1,7 @@
 # golang:build
 
+Generate `golang:build` task spec for a golang binary
+
 ## Usage
 
 ### `cmd.yml`

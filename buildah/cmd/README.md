@@ -1,5 +1,7 @@
 # `tools.buildah[*].cmd`
 
+Generate cmd list for `buildah` tool.
+
 ## Usage
 
 ### `ctr.yml`

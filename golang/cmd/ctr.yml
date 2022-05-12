@@ -1,7 +1,6 @@
 {{- define "golang.cmd.ctr" -}}
 
 {{- $version := var.version | default "1.18" -}}
-{{- $host_arch := default host.arch var.host_arch | default "amd64" | trimSuffix "sf" -}}
 {{- $flavor := var.flavor -}}
 {{- if not $flavor -}}
   {{- if eq env.CGO_ENABLED "1" "true" -}}
@@ -14,8 +13,8 @@
 {{- $flavor_tag := include "image.flavored-tag"
   (dict
     "flavor" (default "native" var.flavor)
-    "arch" (default matrix.arch var.arch | default $host_arch | trimSuffix "sf")
-    "host_arch" $host_arch
+    "arch" (var.arch | default matrix.arch | default var.host_arch | default "amd64")
+    "host_arch" var.host_arch
   )
 -}}
 
@@ -82,7 +81,7 @@
 
 {{- /* start of go module related settings */}}
 
-# always use gomod
+# always use go module (if available, >= go1.11)
 
 - -e
 - GO111MODULE=on

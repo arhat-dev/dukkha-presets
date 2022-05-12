@@ -1,6 +1,6 @@
 {{- /*
 
-description: Generate list of strings to run container
+description: Generate cmd list to run container
 
 usage:
   foo@tpl#use-spec:
@@ -26,19 +26,11 @@ usage:
   {{- $order = var.order -}}
 {{- end -}}
 
-{{- $try := true -}}
-
 {{- range $_, $tool := $order -}}
 
-  {{- if $try -}}
-
-    {{- if strings.TrimSpace (
-        eval.Shell (
-          printf "command -v %s 2>/dev/null || true" $tool
-        )
-      ) -}}
-
-{{- $try = false -}}
+  {{- if not (os.Lookup $tool) -}}
+    {{- continue -}}
+  {{- end -}}
 
 {{- if eq $tool "podman" -}}
 
@@ -56,6 +48,7 @@ usage:
 - {{ $arg }}
   {{- end }}
 
+  {{break}}
 {{- else if eq $tool "nerdctl" -}}
 
   {{- if var.privileged }}
@@ -72,6 +65,7 @@ usage:
 - {{ $arg }}
   {{- end }}
 
+  {{break}}
 {{- else if eq $tool "limactl" }}
 
 - limactl
@@ -104,6 +98,7 @@ usage:
 - {{ $arg }}
   {{- end }}
 
+  {{break}}
 {{- else if eq $tool "docker" }}
 
 - docker
@@ -117,8 +112,6 @@ usage:
 - {{ $arg }}
   {{- end }}
 
+  {{break}}
 {{- end -}} {{- /* if tool match */ -}}
-
-    {{- end -}} {{- /* if command -v */ -}}
-  {{- end -}} {{- /* if $try */ -}}
 {{- end -}} {{- /* range */ -}}

@@ -4,13 +4,11 @@
 
 ## `names.yml`
 
-Generate `images_names` for
+Generate value for `images_names` in tasks like
 
 - `buildah:{build, xbuild, push}`
 - `docker:{build, push}`
 - `cosign:{sign-image, upload}`
-
-and maybe more in future...
 
 ### Usage
 
@@ -29,12 +27,13 @@ buildah:build:
       # Defaults to matrix.kernel first, then host.kernel, finally linux
       kernel: linux
 
-      # Defaults to matrix.arch first, then host.arch, finally amd64
+      # Defaults to matrix.arch first, then host.arch_simple, finally amd64
       arch: amd64
 
       # Version should follow semantic versioning style (prefix `v` will be trimed)
       #
-      # Defaults to matrix.version first
+      # Defaults to
+      #            matrix.version first
       #       then env.VERSION
       #       then git.tag
       #       then git.branch (normalized as kebab-case)
@@ -58,30 +57,30 @@ buildah:build:
 
 ### Output
 
-By default, will add:
+By default, adds:
 
 ```yaml
-- image: `{image_repo}/{app}:{version}-{kernel}-{arch}`
-  manifest: `{image_repo}/app:{version}`
+- image: `{base_name}:{version}-{kernel}-{arch}`
+  manifest: `{base_name}:{version}`
 ```
 
-When latest evaluated as `true`, add:
+When latest evaluated as `true`, additionaly adds:
 
 ```yaml
-- image: `{image_repo}/{app}:latest-{kernel}-{arch}`
-  manifest: `{image_repo}/app:latest`
+- image: `{base_name}:latest-{kernel}-{arch}`
+  manifest: `{base_name}:latest`
 ```
 
-When set_major evaluated as `true`, add:
+When set_major evaluated as `true`, additionaly adds:
 
 ```yaml
-- image: `{image_repo}/{app}:{version major}-{kernel}-{arch}`
-  manifest: `{image_repo}/app:{version major}`
+- image: `{base_name}:{version major}-{kernel}-{arch}`
+  manifest: `{base_name}:{version major}`
 ```
 
-When version contains multiple dot separated parts, add
+When version contains multiple dot separated parts, additionaly adds
 
 ```yaml
-- image: `{image_repo}/{app}:{version major}.{version minor}-{kernel}-{arch}`
-  manifest: `{image_repo}/app:{version major}.{version minor}`
+- image: `{base_name}:{version major}.{version minor}-{kernel}-{arch}`
+  manifest: `{base_name}:{version major}.{version minor}`
 ```

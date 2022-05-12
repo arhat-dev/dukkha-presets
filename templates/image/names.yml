@@ -10,7 +10,7 @@
 
 {{- $arch := var.arch
       | default matrix.arch
-      | default host.arch
+      | default host.arch_simple
       | default "amd64"
 -}}
 
