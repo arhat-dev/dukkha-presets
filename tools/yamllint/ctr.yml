@@ -2,7 +2,7 @@
 
 {{- $version := var.version | default "1.26" -}}
 {{- $config := var.config | default ".yaml-lint.yml" -}}
-{{- $args := var.args | default (slice) -}}
+{{- $args := var.args | default (stringList) -}}
 {{- $files := var.files | default (strings.Split "," ".") -}}
 {{- $image := var.image | default (printf "ghcr.io/arhat-dev/yamllint:%s" $version) -}}
 

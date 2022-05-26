@@ -80,7 +80,9 @@ workflow:run:
     - name: RUN_CTR
       value@presets?str|shell?str: scripts/test/enumerate-run-ctr.sh
 
-    task: buildah:in-ctr:xbuild(dukkha-preset, {})
+    task:
+      ref: buildah:in-ctr:xbuild(dukkha-preset)
+      matrix_filter: {}
 
     next@tpl: |-
       {{- if not values.buildah.in_ctr.done -}}

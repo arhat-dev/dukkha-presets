@@ -14,6 +14,7 @@ key="values.${PRESET}.in_ctr.podman"
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.podman"
   if command -v podman >/dev/null 2>&1 ; then
+    # tpl:include 'image.'
     printf "[podman,run,--rm]"
     exit 0
   fi

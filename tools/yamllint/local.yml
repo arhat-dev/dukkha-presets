@@ -2,11 +2,11 @@
 
 {{- $version := var.version | default "1.26" -}}
 {{- $config := var.config | default ".yaml-lint.yml" -}}
-{{- $args := var.args | default (slice) -}}
+{{- $args := var.args | default (stringList) -}}
 {{- $files := var.files | default (strings.Split "," ".") -}}
 
 {{- $local_version := strings.TrimPrefix "yamllint " (strings.TrimSpace (
-      eval.Shell "yamllint --version 2>/dev/null || true"
+      (eval.Shell "yamllint --version 2>/dev/null || true").Stdout
     ))
 -}}
 

@@ -1,10 +1,12 @@
-{{- $lima_list := strings.Split "\n"
-      (
-        eval.Shell "if command -v limactl >/dev/null 2>&1; then limactl list --json; fi"
-          | jq "select(.status == \"Running\") | .name"
-      )
--}}
+{{- if fs.Lookup "limactl" -}}
 
-{{- if $lima_list -}}
-  {{- index $lima_list 0 -}}
+  {{- $lima_list := (eval.Shell "limactl list --json").Stdout
+      | jq "select(.status == \"Running\") | .name"
+      | strings.Split "\n"
+  -}}
+
+  {{- if $lima_list -}}
+    {{- index 0 $lima_list -}}
+  {{- end -}}
+
 {{- end -}}

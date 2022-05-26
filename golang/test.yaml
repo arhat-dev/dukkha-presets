@@ -19,7 +19,7 @@ tools:
         flavor@env: ${FLAVOR}
         volume: dukkha-preset
         workdir@tpl: |-
-          {{- filepath.Join dukkha.WorkDir "golang" "testdata" -}}
+          {{- fs.Join dukkha.WorkDir "golang" "testdata" -}}
         run_ctr@env: ${RUN_CTR}
 
 # we are using virtual key for task (which is a inline map in dukkha)
@@ -50,9 +50,9 @@ golang:test:
   matrix:
     pkg@tpl: |-
       {{-
-        eval.Shell "cd golang/testdata && go list ./..."
+        (eval.Shell "cd golang/testdata && go list ./...").Stdout
           | removePrefix
-              (eval.Shell "cd golang/testdata && go list -m" | strings.TrimSpace)
+              ((eval.Shell "cd golang/testdata && go list -m").Stdout | strings.TrimSpace)
           | removePrefix "/"
           | addPrefix "- "
       -}}
@@ -74,16 +74,21 @@ workflow:run:
   - name: PRESET
     value: golang
   jobs:
-  - task: golang:build(dukkha-preset, {})
+  # - task:
+  #     ref: golang:build(dukkha-preset)
+  #     matrix_filter: {}
+
   - shell: &inspect_build_artifacts |-
       ls -alh golang/testdata/build || true
       rm -rf golang/testdata/build || true
 
   - name: golang:in-ctr:build
     if@tpl: &is_linux |-
-      {{- eq host.kernel "linux" | toString -}}
-    task: |-
-      golang:in-ctr:build(dukkha-preset, { kernel: [linux] })
+      {{- eq host.kernel "linux" "darwin" -}}
+    task:
+      ref: golang:in-ctr:build(dukkha-preset)
+      matrix_filter:
+        kernel: [linux]
     next@tpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:build
@@ -99,15 +104,19 @@ workflow:run:
   - shell: *inspect_build_artifacts
     if@tpl: *is_linux
 
-  - task: golang:test(dukkha-preset-pkg, {})
+  - task:
+      ref: golang:test(dukkha-preset-pkg)
+      matrix_filter: {}
+
   - shell: &inspect_test_profile |-
       ls -alh golang/testdata/build/test-profile
       rm -rf golang/testdata/build/test-profile
 
   - name: golang:in-ctr:test
     if@tpl: *is_linux
-    task: |-
-      golang:in-ctr:test(dukkha-preset-pkg, {})
+    task:
+      ref: golang:in-ctr:test(dukkha-preset-pkg)
+      matrix_filter: {}
     next@tpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:test

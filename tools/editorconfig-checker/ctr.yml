@@ -2,7 +2,7 @@
 
 {{- $version := var.version | default "2.3" -}}
 {{- $config := var.config | default ".ecrc" -}}
-{{- $args := var.args | default (slice) -}}
+{{- $args := var.args | default (stringList) -}}
 {{- $image := var.image | default (
       printf "ghcr.io/arhat-dev/editorconfig-checker:%s" $version
     )

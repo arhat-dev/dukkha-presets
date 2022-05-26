@@ -17,8 +17,8 @@ golang:test:
     # here we generate pkg vector automatically
     pkg@tpl: |-
       {{-
-        eval.Shell "go list ./pkg/... ./cmd/... ./internal/..."
-          | removePrefix (eval.Shell "go list -m" | trimSpace)
+        eval.Shell ("go list ./pkg/... ./cmd/... ./internal/...").Stdout
+          | removePrefix (eval.Shell "go list -m" | trimSpace).Stdout
           | removePrefix "/"
           | addPrefix "- "
       -}}

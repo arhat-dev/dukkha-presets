@@ -2,9 +2,9 @@
 
 {{- $version := var.version | default "2.3" -}}
 {{- $config := var.config | default ".ecrc" -}}
-{{- $args := var.args | default (slice) -}}
+{{- $args := var.args | default (stringList) -}}
 {{- $local_version := strings.TrimSpace (
-      eval.Shell "editorconfig-checker -version 2>/dev/null || true"
+      (eval.Shell "editorconfig-checker -version 2>/dev/null || true").Stdout
     )
 -}}
 

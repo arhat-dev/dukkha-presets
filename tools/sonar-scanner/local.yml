@@ -1,22 +1,22 @@
 {{- define "tools.sonar-scanner.local" -}}
 
 {{- $version := var.version | default "4.6" -}}
-{{- $args := var.args | default (slice) -}}
+{{- $args := var.args | default (stringList) -}}
 
 {{- $local_version_parts := strings.Split "\n" (
-      eval.Shell "sonar-scanner --version 2>/dev/null || true"
+      (eval.Shell "sonar-scanner --version 2>/dev/null || true").Stdout
     )
 -}}
 
 {{- $local_version := "" -}}
 {{- if gt (len $local_version_parts) 2 -}}
   {{- $local_version_parts = strings.Split " " (
-      index $local_version_parts 2
+      index 2 $local_version_parts
     )
   -}}
 
   {{- if gt (len $local_version_parts) 2 -}}
-    {{- $local_version = (index $local_version_parts 2) -}}
+    {{- $local_version = (index 2 $local_version_parts) -}}
   {{- end -}}
 {{- end -}}
 

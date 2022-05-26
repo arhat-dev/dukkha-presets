@@ -2,9 +2,9 @@ workflow:run:
 - name: test-tools
   matrix:
     tool@tpl: |-
-      {{- $matches := filepath.Glob "tools/**/local.yml" -}}
+      {{- $matches := fs.Glob "tools/**/local.yml" -}}
       {{- range $_, $f := $matches }}
-      - {{ filepath.Dir $f | filepath.Base }}
+      - {{ fs.Dir $f | fs.Base }}
       {{- end }}
     workdir:
     - ""
@@ -29,7 +29,7 @@ workflow:run:
     - &dukkha_only_path
       name: PATH
       value@tpl: |-
-        {{- filepath.Dir (eval.Shell "command -v dukkha") -}}
+        {{- fs.Dir (eval.Shell "command -v dukkha").Stdout -}}
 
     shell@env: &render |-
       echo "--- START of ${kind}.yml ---"
@@ -58,7 +58,7 @@ workflow:run:
     - &add_fake_bin_path
       name: PATH
       value@tpl: |-
-        {{- filepath.Join dukkha.WorkDir "tools" "testdata" "bin" -}}:{{ env.PATH }}
+        {{- fs.Join dukkha.WorkDir "tools" "testdata" "bin" -}}:{{ env.PATH }}
     shell@env: *render
 
   - name: Local first, fallback to ctr

@@ -40,13 +40,13 @@
 {{- end -}}
 
 {{- $version_parts := strings.SplitN "." 3 $version -}}
-{{- $version_major := index $version_parts 0 -}}
+{{- $version_major := index 0 $version_parts -}}
 
 {{- $can_set_major = and $can_set_major (gt (len $version_parts) 1) -}}
 
 {{- $version_minor := "" -}}
 {{- if gt (len $version_parts) 1 -}}
-  {{- $version_minor = index $version_parts 1 -}}
+  {{- $version_minor = index 1 $version_parts -}}
 {{- end -}}
 
 {{- $set_major := false -}}
