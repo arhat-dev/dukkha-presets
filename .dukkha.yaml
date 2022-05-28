@@ -6,7 +6,8 @@ include:
 global:
   values:
     cmd:
-      run_ctr@presets|tpl: templates/run-ctr.yml
+      run_ctr@tpl#use-spec:
+        template@presets?str: templates/run-ctr.yml
 
 tools:
   workflow:

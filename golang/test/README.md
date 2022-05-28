@@ -25,7 +25,7 @@ golang:test:
   hooks:
     before:
     # create profile dir before test start
-    - shell: tpl:os.MkdirAll ${PROFILE_DIR}
+    - shell: tpl:mkdir ${PROFILE_DIR}
 
   __@tpl#use-spec:
     template: |-

@@ -58,7 +58,7 @@ golang:test:
       -}}
   hooks:
     before:
-    - shell: mkdir -p ${PROFILE_DIR}
+    - shell: tpl:mkdir -p ${PROFILE_DIR}
 
   __@tpl#use-spec:
     template: |-
@@ -74,9 +74,9 @@ workflow:run:
   - name: PRESET
     value: golang
   jobs:
-  # - task:
-  #     ref: golang:build(dukkha-preset)
-  #     matrix_filter: {}
+  - task:
+      ref: golang:build(dukkha-preset)
+      matrix_filter: {}
 
   - shell: &inspect_build_artifacts |-
       ls -alh golang/testdata/build || true

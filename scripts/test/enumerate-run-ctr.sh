@@ -2,11 +2,11 @@
 # shellcheck disable=SC2154
 
 mark_done() {
-  tpl:dukkha.SetValue "\"${1}\"" '"done"' >/dev/null 2>&1
+  tpl:dukkha.SetValue "${1}" "done" >/dev/null 2>&1
 }
 
 mark_todo() {
-  tpl:dukkha.SetValue "\"${1}\"" '"todo"' >/dev/null 2>&1
+  tpl:dukkha.SetValue "${1}" "todo" >/dev/null 2>&1
 }
 
 key="values.${PRESET}.in_ctr.podman"
@@ -14,8 +14,16 @@ key="values.${PRESET}.in_ctr.podman"
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.podman"
   if command -v podman >/dev/null 2>&1 ; then
-    # tpl:include 'image.'
-    printf "[podman,run,--rm]"
+
+    tpl:dukkha.Self render <<EOF
+__@tpl#use-spec:
+  template@presets?str: templates/run-ctr.yml
+  variables:
+    order: [podman]
+    # for macos
+    lima_instance@presets?str|tpl: templates/first-active-lima-instance.tpl
+EOF
+
     exit 0
   fi
 fi
@@ -25,7 +33,14 @@ key="values.${PRESET}.in_ctr.nerdctl"
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.nerdctl"
   if command -v nerdctl >/dev/null 2>&1 ; then
-    printf "[nerdctl,run,--rm]"
+
+    tpl:dukkha.Self render <<EOF
+__@tpl#use-spec:
+  template@presets?str: templates/run-ctr.yml
+  variables:
+    order: [nerdctl]
+EOF
+
     exit 0
   fi
 fi
@@ -35,7 +50,16 @@ key="values.${PRESET}.in_ctr.limactl"
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.limactl"
   if command -v limactl >/dev/null 2>&1 ; then
-    printf "[limactl,shell,%s,sudo,nerdctl,run,--rm,--privileged]" "${lima_instance:-"default"}"
+
+    tpl:dukkha.Self render <<EOF
+__@tpl#use-spec:
+  template@presets?str: templates/run-ctr.yml
+  variables:
+    order: [lima-nerdctl]
+    # for macos
+    lima_instance@presets?str|tpl: templates/first-active-lima-instance.tpl
+EOF
+
     exit 0
   fi
 fi
@@ -45,12 +69,19 @@ key="values.${PRESET}.in_ctr.docker"
 if [[ "${!key}" != "done" ]]; then
   mark_done "${PRESET}.in_ctr.docker"
   if command -v docker >/dev/null 2>&1 ; then
-    printf "[docker,run,--rm]"
+
+    tpl:dukkha.Self render <<EOF
+__@tpl#use-spec:
+  template@presets?str: templates/run-ctr.yml
+  variables:
+    order: [docker]
+EOF
+
     exit 0
   fi
 fi
 
-tpl:dukkha.SetValue "\"${PRESET}.in_ctr.done\"" '"true"' >/dev/null 2>&1
+tpl:dukkha.SetValue "${PRESET}.in_ctr.done" "true" >/dev/null 2>&1
 
 mark_todo "${PRESET}.in_ctr.podman"
 mark_todo "${PRESET}.in_ctr.nerdctl"

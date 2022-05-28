@@ -64,9 +64,11 @@ usage:
 
 */ -}}
 
-{{- $order := strings.Split "," "podman,nerdctl,lima-nerdctl,lima-podman,docker" -}}
+{{- $order := coll.Strings -}}
 {{- if var.order -}}
   {{- $order = var.order -}}
+{{- else -}}
+  {{- $order = coll.Strings "podman" "nerdctl" "lima-nerdctl" "lima-podman" "docker" -}}
 {{- end -}}
 
 {{- range $_, $tool := $order -}}
@@ -150,7 +152,6 @@ usage:
 
   {{- end }}
 - run
-- --rm
   {{- if var.privileged }}
 - --privileged
   {{- end }}
@@ -162,7 +163,6 @@ usage:
   {{- end }}
 - nerdctl
 - run
-- --rm
   {{- if var.privileged }}
 - --privileged
   {{- end }}
@@ -171,18 +171,19 @@ usage:
 
 - limactl
 - shell
-- {{ var.lima_instance | env.LIMA_INSTANCE | default "default" }}
+- {{ var.lima_instance | default env.LIMA_INSTANCE | default "default" }}
 
   {{- if var.privileged }}
 - sudo
   {{- end }}
+
   {{- if eq $tool "lima-nerdctl" }}
 - nerdctl
   {{- else if eq $tool "lima-podman" }}
 - podman
-  {{- end -}}
+  {{- end }}
+
 - run
-- --rm
   {{- if var.privileged }}
 - --privileged
   {{- end }}
@@ -191,7 +192,6 @@ usage:
 
 - docker
 - run
-- --rm
   {{- if var.privileged }}
 - --privileged
   {{- end }}
@@ -204,4 +204,4 @@ usage:
 
 {{break}}
 
-{{- end -}} {{- /* range */ -}}
+{{- end -}} {{- /* range order (tools) */ -}}
