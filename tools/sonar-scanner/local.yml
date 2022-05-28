@@ -1,6 +1,6 @@
 {{- define "tools.sonar-scanner.local" -}}
 
-{{- $version := var.version | default "4.6" -}}
+{{- $version := var.version | default "4.7" -}}
 {{- $args := var.args | default (stringList) -}}
 
 {{- $local_version_parts := strings.Split "\n" (

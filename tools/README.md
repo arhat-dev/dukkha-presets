@@ -15,7 +15,7 @@ workflow:run:
   matrix:
     include:
     - tool: [editorconfig-checker]
-      # version: ["2.3"]
+      # version: ["2.4"]
       # workdir: [""]
       # config: [".ecrc"]
 
@@ -30,7 +30,7 @@ workflow:run:
       # files: ["."]
 
     - tool: [golangci-lint]
-      # version: ["1.43"]
+      # version: ["1.45"]
       # workdir: [""]
       # config: [""]
       # packages: ["./..."]

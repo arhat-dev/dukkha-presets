@@ -83,12 +83,13 @@ workflow:run:
       rm -rf golang/testdata/build || true
 
   - name: golang:in-ctr:build
-    if@tpl: &is_linux |-
+    if@tpl: &is_linux_or_darwin |-
       {{- eq host.kernel "linux" "darwin" -}}
     task:
       ref: golang:in-ctr:build(dukkha-preset)
       matrix_filter:
-        kernel: [linux]
+        kernel:
+        - __@env: ${HOST_KERNEL}
     next@tpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:build
@@ -102,7 +103,7 @@ workflow:run:
       value@presets?str|shell?str: scripts/test/enumerate-run-ctr.sh
 
   - shell: *inspect_build_artifacts
-    if@tpl: *is_linux
+    if@tpl: *is_linux_or_darwin
 
   - task:
       ref: golang:test(dukkha-preset-pkg)
@@ -113,7 +114,7 @@ workflow:run:
       rm -rf golang/testdata/build/test-profile
 
   - name: golang:in-ctr:test
-    if@tpl: *is_linux
+    if@tpl: *is_linux_or_darwin
     task:
       ref: golang:in-ctr:test(dukkha-preset-pkg)
       matrix_filter: {}
@@ -124,4 +125,4 @@ workflow:run:
     env: *ctr_env
 
   - shell: *inspect_test_profile
-    if@tpl: *is_linux
+    if@tpl: *is_linux_or_darwin

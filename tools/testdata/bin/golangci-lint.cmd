@@ -1,1 +1,1 @@
-echo "golangci-lint has version v1.43.0 built from ..."
+echo "golangci-lint has version v1.45.0 built from ..."

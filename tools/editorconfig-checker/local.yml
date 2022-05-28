@@ -1,6 +1,6 @@
 {{- define "tools.editorconfig-checker.local" -}}
 
-{{- $version := var.version | default "2.3" -}}
+{{- $version := var.version | default "2.4" -}}
 {{- $config := var.config | default ".ecrc" -}}
 {{- $args := var.args | default (stringList) -}}
 {{- $local_version := strings.TrimSpace (

@@ -11,12 +11,12 @@ Environment Variables:
 
 ```yaml
 cmd@tpl:
-  template@http?str: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/tools/sonar-scanner.yml
+  template@presets?str: tools/sonar-scanner/ctr.yml
   variables:
     # version of sonar-scanner
     #
-    # Defaults to "4.6"
-    version: "4.6"
+    # Defaults to "4.7"
+    version: "4.7"
 
     # workdir when running sonar-scanner
     #

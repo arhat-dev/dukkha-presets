@@ -42,7 +42,7 @@ workflow:run:
   matrix:
     include:
     - tool: [editorconfig-checker]
-      # version: ["2.3"]
+      # version: ["2.4"]
       # workdir: [""]
       config:
       - __@presets#cached-file: tools/editorconfig-checker/config.json
@@ -60,7 +60,7 @@ workflow:run:
       # - __@presets#cached-file: tools/yamllint/config.yaml
 
     - tool: [golangci-lint]
-      # version: ["1.43"]
+      # version: ["1.45"]
       # workdir: [""]
       # config: [""]
       # pkgs: ["./..."]

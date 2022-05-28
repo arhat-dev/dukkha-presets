@@ -15,8 +15,8 @@ foo@tpl#use-spec:
   variables:
     # version of golangci-lint
     #
-    # Defaults to "1.43"
-    version: "1.43"
+    # Defaults to "1.45"
+    version: "1.45"
 
     # extra args to golangci run
     #

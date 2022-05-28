@@ -1,6 +1,8 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
 
+# output of this script is a yaml list of command to run container
+
 mark_done() {
   tpl:dukkha.SetValue "${1}" "done" >/dev/null 2>&1
 }

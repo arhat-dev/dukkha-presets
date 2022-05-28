@@ -1,6 +1,6 @@
 {{- define "tools.sonar-scanner.ctr" -}}
 
-{{- $version := var.version | default "4.6" -}}
+{{- $version := var.version | default "4.7" -}}
 {{- $args := var.args | default (stringList) -}}
 {{- $image := var.image | default (
     printf "docker.io/sonarsource/sonar-scanner-cli:%s" $version

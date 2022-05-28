@@ -11,8 +11,8 @@ foo@tpl:
   variables:
     # version of editorconfig-checker
     #
-    # Defaults to "2.3"
-    version: "2.3"
+    # Defaults to "2.4"
+    version: "2.4"
 
     # config of editorconfig-checker
     #

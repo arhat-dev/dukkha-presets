@@ -1,6 +1,6 @@
 {{- define "tools.golangci-lint.ctr" -}}
 
-{{- $version := var.version | default "1.43" -}}
+{{- $version := var.version | default "1.45" -}}
 {{- $config := var.config | default "" -}}
 {{- $args := var.args | default (strings.Split "," "--fix,--color,always") -}}
 {{- $packages := var.packages | default (strings.Split "," "./...") -}}
