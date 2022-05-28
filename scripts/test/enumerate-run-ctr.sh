@@ -66,26 +66,26 @@ EOF
   fi
 fi
 
-key="values.${PRESET}.in_ctr.docker"
-
-if [[ "${!key}" != "done" ]]; then
-  mark_done "${PRESET}.in_ctr.docker"
-  if command -v docker >/dev/null 2>&1 ; then
-
-    tpl:dukkha.Self render <<EOF
-__@tpl#use-spec:
-  template@presets?str: templates/run-ctr.yml
-  variables:
-    order: [docker]
-EOF
-
-    exit 0
-  fi
-fi
+# key="values.${PRESET}.in_ctr.docker"
+#
+# if [[ "${!key}" != "done" ]]; then
+#   mark_done "${PRESET}.in_ctr.docker"
+#   if command -v docker >/dev/null 2>&1 ; then
+#
+#     tpl:dukkha.Self render <<EOF
+# __@tpl#use-spec:
+#   template@presets?str: templates/run-ctr.yml
+#   variables:
+#     order: [docker]
+# EOF
+#
+#     exit 0
+#   fi
+# fi
 
 tpl:dukkha.SetValue "${PRESET}.in_ctr.done" "true" >/dev/null 2>&1
 
 mark_todo "${PRESET}.in_ctr.podman"
 mark_todo "${PRESET}.in_ctr.nerdctl"
 mark_todo "${PRESET}.in_ctr.limactl"
-mark_todo "${PRESET}.in_ctr.docker"
+# mark_todo "${PRESET}.in_ctr.docker"
