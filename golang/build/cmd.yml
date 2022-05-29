@@ -1,7 +1,7 @@
 {{- define "golang.build.cmd" -}}
 
-{{- $kernel := matrix.kernel | default host.kernel | default "linux" -}}
-{{- $arch := matrix.arch | default host.arch | default "amd64" -}}
+{{- $kernel := var.kernel | default matrix.kernel | default host.kernel | default "linux" -}}
+{{- $arch := var.arch | default matrix.arch | default host.arch | default "amd64" -}}
 
 {{- $suffix := "" -}}
 {{- if eq $kernel "windows" -}}
@@ -28,6 +28,6 @@ outputs:
   {{- if and (eq $kernel host.kernel) (eq $arch host.arch) }}
 - {{ path.Join $output_dir (printf "%s%s" $cmd $suffix) }}
   {{- end }}
-- {{ path.Join $output_dir (printf "%s.%s.%s%s" $cmd $kernel $arch $suffix) }}
+- {{ path.Join $output_dir (printf "%s-%s-%s%s" $cmd $kernel $arch $suffix) }}
 
 {{- end -}}
