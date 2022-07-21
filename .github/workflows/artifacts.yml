@@ -61,13 +61,13 @@ jobs:
       matrix: ${{ fromJson(inputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         # disable shallow-clone
         fetch-depth: 0
 
     - name: Install cosign
-      uses: sigstore/cosign-installer@v1.3.1
+      uses: sigstore/cosign-installer@v2.4.1
 
     - name: Install dukkha
       if: inputs.install_dukkha

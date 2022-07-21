@@ -42,7 +42,7 @@ jobs:
       matrix: ${{ fromJson(inputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         # disable shallow-clone
         fetch-depth: 0
