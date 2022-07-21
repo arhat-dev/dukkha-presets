@@ -68,7 +68,7 @@ jobs:
         # https://github.com/actions/virtual-environments/issues/4589#issuecomment-1100899313
         sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
         sudo apt-get update
-        sudo apt-get install -y --allow-downgrades libpcre2-8-0=10.34-7 libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
+        sudo apt-get install -y --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
 
     - name: Add wine repo (ubuntu-18.04)
       if: startsWith(matrix.os, 'ubuntu-18.04') && inputs.install_wine
@@ -82,12 +82,13 @@ jobs:
         export DEBIAN_FRONTEND=noninteractive
         sudo dpkg --add-architecture i386 || true
         sudo apt-get update
-        # sudo apt install -y aptitude
-        # sudo aptitude install -y --with-recommends winehq-stable
 
-        sudo apt-get install -y --install-recommends winehq-staging
-
+        sudo apt install -y aptitude
+        sudo aptitude install -y --with-recommends winehq-stable
         echo "/opt/wine-staging/bin" >>"${GITHUB_PATH}"
+
+        # sudo apt-get install -y --install-recommends winehq-staging
+        # echo "/opt/wine-staging/bin" >>"${GITHUB_PATH}"
 
         wine64 --help
         wine --help
