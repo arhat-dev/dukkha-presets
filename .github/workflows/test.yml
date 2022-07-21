@@ -28,6 +28,11 @@ on:
         default: false
         type: boolean
 
+      install_dukkha:
+        required: false
+        default: true
+        type: boolean
+
     secrets:
       sonarqube-token:
         required: false
@@ -63,7 +68,7 @@ jobs:
         # https://github.com/actions/virtual-environments/issues/4589#issuecomment-1100899313
         sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
         sudo apt-get update
-        sudo apt-get install -y --allow-downgrades libpcre2-8-0/focal libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
+        sudo apt-get install -y --allow-downgrades libpcre2-8-0=10.34-7 libpcre2-16-0/focal libpcre2-32-0/focal libpcre2-posix2/focal
 
     - name: Add wine repo (ubuntu-18.04)
       if: startsWith(matrix.os, 'ubuntu-18.04') && inputs.install_wine
@@ -98,6 +103,7 @@ jobs:
         brew install --cask wine-stable
 
     - name: Install dukkha
+      if: inputs.install_dukkha
       uses: arhat-dev/actions-setup-dukkha@master
       with:
         version: latest

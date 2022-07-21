@@ -23,6 +23,11 @@ on:
         default: ""
         type: string
 
+      install_dukkha:
+        required: false
+        default: true
+        type: boolean
+
 env:
   GO111MODULE: "on"
 
@@ -43,6 +48,7 @@ jobs:
         fetch-depth: 0
 
     - name: Install dukkha
+      if: inputs.install_dukkha
       uses: arhat-dev/actions-setup-dukkha@master
       with:
         version: latest

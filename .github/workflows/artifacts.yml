@@ -30,6 +30,11 @@ on:
         default: ""
         type: string
 
+      install_dukkha:
+        required: false
+        default: true
+        type: boolean
+
     secrets:
       token:
         description: |-
@@ -65,6 +70,7 @@ jobs:
       uses: sigstore/cosign-installer@v1.3.1
 
     - name: Install dukkha
+      if: inputs.install_dukkha
       uses: arhat-dev/actions-setup-dukkha@master
       with:
         version: latest
