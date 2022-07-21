@@ -70,6 +70,12 @@ jobs:
         version: latest
         go-version: ${{ matrix.go }}
 
+    - name: Install go
+      if: ${{ ! inputs.install_dukkha }}
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go }}
+
     - name: Setup multi-arch support
       if: startsWith(matrix.os, 'ubuntu-')
       uses: dbhi/qus/action@main

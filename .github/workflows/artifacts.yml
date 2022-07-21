@@ -76,6 +76,12 @@ jobs:
         version: latest
         go-version: ${{ matrix.go }}
 
+    - name: Install go
+      if: ${{ ! inputs.install_dukkha }}
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ matrix.go }}
+
     - name: Prepare artifacts build
       run: |-
         ${{ inputs.prepare }}
