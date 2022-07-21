@@ -1,6 +1,6 @@
 # see ../../../golang/tool-in-ctr.yml
 # treat BUILDER_FLAVOR as IMAGE_FLAVOR
-ref@tpl: |-
+ref@tmpl: |-
   {{- $flavor := env.BUILDER_FLAVOR | default "native" -}}
   {{- $ver := env.GO_VERSION | default "1.18" -}}
   {{- $arch := matrix.arch | default host.arch_simple | archconv.HardFloatArch -}}

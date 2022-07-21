@@ -17,7 +17,7 @@ golang:build:
     kernel: [linux, darwin]
     arch: [amd64, arm64]
 
-  __@tpl#use-spec:
+  __@tmpl#use-spec:
     template: |-
       {{- include "golang.build.cmd" . -}}
 

@@ -5,7 +5,7 @@ Run [`golangci-lint`](https://github.com/golangci/golangci-lint) to lint golang 
 ## Usage
 
 ```yaml
-foo@tpl#use-spec:
+foo@tmpl#use-spec:
   template: |-
     {{- include "tools.golangci-lint.ctr" . -}}
 

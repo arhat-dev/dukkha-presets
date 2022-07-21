@@ -15,7 +15,7 @@ golang:test:
 
   matrix:
     # here we generate pkg vector automatically
-    pkg@tpl: |-
+    pkg@tmpl: |-
       {{-
         eval.Shell ("go list ./pkg/... ./cmd/... ./internal/...").Stdout
           | removePrefix (eval.Shell "go list -m" | trimSpace).Stdout
@@ -25,9 +25,9 @@ golang:test:
   hooks:
     before:
     # create profile dir before test start
-    - shell: tpl:mkdir ${PROFILE_DIR}
+    - shell: tmpl:mkdir ${PROFILE_DIR}
 
-  __@tpl#use-spec:
+  __@tmpl#use-spec:
     template: |-
       {{- include "golang.test.pkg" . -}}
     include:
@@ -37,7 +37,7 @@ golang:test:
       # Directory to write profile generated during test
       #
       # Defaults to "build/test-profile"
-      profile_dir@tpl: |-
+      profile_dir@tmpl: |-
         {{- env.PROFILE_DIR -}}
 
       # package to test, should be relative path to DUKKHA_WORKDIR

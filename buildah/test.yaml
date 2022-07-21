@@ -2,7 +2,7 @@ tools:
   buildah:
   - name: local
   - name: in-ctr
-    cmd@tpl#use-spec:
+    cmd@tmpl#use-spec:
       template: |-
         {{- include "buildah.cmd.ctr" . -}}
 
@@ -48,7 +48,7 @@ buildah:xbuild:
   #     from:
   #       step:
   #         id: builder
-  #         text@tpl|file?str: |-
+  #         text@tmpl|file?str: |-
   #           /app/golang/testdata/build/
   #           {{- env.APP -}}.{{- matrix.kernel -}}.{{- matrix.arch -}}
   #           /
@@ -71,12 +71,12 @@ workflow:run:
 
   jobs:
   - name: buildah:in-ctr:xbuild
-    if@tpl: &is_linux |-
+    if@tmpl: &is_linux |-
       {{- eq host.kernel "linux" | toString -}}
     env:
     # env to set run_ctr variable in tool
     - name: lima_instance
-      value@presets|tpl: templates/first-active-lima-instance.tpl
+      value@presets|tmpl: templates/first-active-lima-instance.tmpl
     - name: RUN_CTR
       value@presets?str|shell?str: scripts/test/enumerate-run-ctr.sh
 
@@ -84,7 +84,7 @@ workflow:run:
       ref: buildah:in-ctr:xbuild(dukkha-preset)
       matrix_filter: {}
 
-    next@tpl: |-
+    next@tmpl: |-
       {{- if not values.buildah.in_ctr.done -}}
         buildah:in-ctr:xbuild
       {{- end -}}

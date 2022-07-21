@@ -7,18 +7,18 @@ tools:
   golang:
   - name: local
   - name: in-ctr
-    cmd@tpl#use-spec:
+    cmd@tmpl#use-spec:
       template: |-
         {{- include "golang.cmd.ctr" . -}}
       include:
-      - text@presets?str: templates/image/flavored-tag.tpl
+      - text@presets?str: templates/image/flavored-tag.tmpl
       - text@presets?str: golang/cmd/ctr.yml
 
       variables:
         # version@env?str: ${GO_VERSION}
         flavor@env: ${FLAVOR}
         volume: dukkha-preset
-        workdir@tpl: |-
+        workdir@tmpl: |-
           {{- fs.Join dukkha.WorkDir "golang" "testdata" -}}
         run_ctr@env: ${RUN_CTR}
 
@@ -28,12 +28,12 @@ golang:build:
 # define task name
 - name: dukkha-preset
   matrix@!:
-    value@tpl|presets: |-
+    value@tmpl|presets: |-
       matrix/golang/{{- env.GO_VERSION -}}/common.yml
     select: |-
       .include.[].cmd = ["dukkha-preset", "foo"] | .cmd = ["dukkha-preset", "foo"]
 
-  __@tpl#use-spec:
+  __@tmpl#use-spec:
     template: |-
       {{- include "golang.build.cmd" . -}}
     include:
@@ -48,7 +48,7 @@ golang:test:
   - name: PROFILE_DIR
     value: golang/testdata/build/test-profile
   matrix:
-    pkg@tpl: |-
+    pkg@tmpl: |-
       {{-
         (eval.Shell "cd golang/testdata && go list ./...").Stdout
           | removePrefix
@@ -58,9 +58,9 @@ golang:test:
       -}}
   hooks:
     before:
-    - shell: tpl:mkdir -p ${PROFILE_DIR}
+    - shell: tmpl:mkdir -p ${PROFILE_DIR}
 
-  __@tpl#use-spec:
+  __@tmpl#use-spec:
     template: |-
       {{- include "golang.test.pkg" . -}}
     include:
@@ -83,14 +83,14 @@ workflow:run:
       rm -rf golang/testdata/build || true
 
   - name: golang:in-ctr:build
-    if@tpl: &is_linux_or_darwin |-
+    if@tmpl: &is_linux_or_darwin |-
       {{- eq host.kernel "linux" "darwin" -}}
     task:
       ref: golang:in-ctr:build(dukkha-preset)
       matrix_filter:
         kernel:
         - __@env: ${HOST_KERNEL}
-    next@tpl: |-
+    next@tmpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:build
       {{- end -}}
@@ -98,12 +98,12 @@ workflow:run:
     - name: FLAVOR
       value: native
     - name: lima_instance
-      value@presets|tpl: templates/first-active-lima-instance.tpl
+      value@presets|tmpl: templates/first-active-lima-instance.tmpl
     - name: RUN_CTR
       value@presets?str|shell?str: scripts/test/enumerate-run-ctr.sh
 
   - shell: *inspect_build_artifacts
-    if@tpl: *is_linux_or_darwin
+    if@tmpl: *is_linux_or_darwin
 
   - task:
       ref: golang:test(dukkha-preset-pkg)
@@ -114,15 +114,15 @@ workflow:run:
       rm -rf golang/testdata/build/test-profile
 
   - name: golang:in-ctr:test
-    if@tpl: *is_linux_or_darwin
+    if@tmpl: *is_linux_or_darwin
     task:
       ref: golang:in-ctr:test(dukkha-preset-pkg)
       matrix_filter: {}
-    next@tpl: |-
+    next@tmpl: |-
       {{- if not values.golang.in_ctr.done -}}
         golang:in-ctr:test
       {{- end -}}
     env: *ctr_env
 
   - shell: *inspect_test_profile
-    if@tpl: *is_linux_or_darwin
+    if@tmpl: *is_linux_or_darwin

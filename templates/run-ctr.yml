@@ -3,7 +3,7 @@
 description: Generate cmd list to run container
 
 usage:
-  foo@tpl#use-spec:
+  foo@tmpl#use-spec:
     template@presets?str: templates/run-ctr.yml
     variables:
       # preferred tool lookup order

@@ -9,7 +9,7 @@ Generate cmd list for `buildah` tool.
 ```yaml
 tools:
   buildah:
-  - cmd@tpl#use-spec:
+  - cmd@tmpl#use-spec:
       template: |-
         {{- include "buildah.cmd.ctr" . -}}
 

@@ -9,13 +9,13 @@ Generate cmd list for `golang` tool
 ```yaml
 tools:
   golang:
-  - cmd@tpl:
+  - cmd@tmpl:
       template: |-
         {{- include "golang.cmd.ctr" . -}}
 
       include:
       # required templates dependency
-      - text@presets?str: templates/image/flavored-tag.tpl
+      - text@presets?str: templates/image/flavored-tag.tmpl
       - text@presets?str: golang/cmd/ctr.yml
 
       variables:

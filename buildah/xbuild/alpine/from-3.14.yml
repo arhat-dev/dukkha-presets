@@ -1,5 +1,5 @@
 from:
-  ref@tpl: ghcr.io/arhat-dev/alpine:3.14-linux-{{ matrix.arch }}
+  ref@tmpl: ghcr.io/arhat-dev/alpine:3.14-linux-{{ matrix.arch }}
   extra_pull_args:
   - --policy
   - always

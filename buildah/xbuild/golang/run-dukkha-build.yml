@@ -1,5 +1,5 @@
 run:
-  script@tpl: |-
+  script@tmpl: |-
     #!/bin/sh
 
     set -eux

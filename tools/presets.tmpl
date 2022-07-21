@@ -7,21 +7,21 @@ template: |-
   {{- $cmd -}}
 
 include:
-- text@tpl|presets?str: |-
+- text@tmpl|presets?str: |-
     {{- path.Join "tools" matrix.tool "local.yml" -}}
-- text@tpl|presets?str: |-
+- text@tmpl|presets?str: |-
     {{- path.Join "tools" matrix.tool "ctr.yml" -}}
 
 variables:
-  version@tpl?str: |-
+  version@tmpl?str: |-
     {{- matrix.version | default "" -}}
-  workdir@tpl?str: |-
+  workdir@tmpl?str: |-
     {{- matrix.workdir | default "" -}}
-  config@tpl?str: |-
+  config@tmpl?str: |-
     {{- matrix.config | default "" -}}
-  args@tpl?[]obj: |-
+  args@tmpl?[]obj: |-
     {{- matrix.args | default "" -}}
-  packages@tpl?[]obj: |-
+  packages@tmpl?[]obj: |-
     {{- matrix.packages | default "" -}}
-  files@tpl?[]obj: |-
+  files@tmpl?[]obj: |-
     {{- matrix.files | default "" -}}

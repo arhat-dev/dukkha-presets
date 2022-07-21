@@ -10,7 +10,7 @@ Environment Variables:
 ## Usage
 
 ```yaml
-cmd@tpl:
+cmd@tmpl:
   template@presets?str: tools/sonar-scanner/ctr.yml
   variables:
     # version of sonar-scanner

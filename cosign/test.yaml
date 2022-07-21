@@ -2,7 +2,7 @@ tools:
   cosign:
   - name: local
   - name: in-ctr
-    cmd@tpl#use-spec:
+    cmd@tmpl#use-spec:
       template: |-
         {{- include "cosign.cmd.ctr" . -}}
       include:

@@ -1,6 +1,6 @@
 # Container related templates
 
-## `flavored-tag.tpl`
+## `flavored-tag.tmpl`
 
 ## `names.yml`
 
@@ -15,7 +15,7 @@ Generate value for `images_names` in tasks like
 ```yaml
 buildah:build:
 - name: foo
-  image_names@tpl#use-spec:
+  image_names@tmpl#use-spec:
     template: |-
       {{- include "image.names" . -}}
 

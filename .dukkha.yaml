@@ -6,7 +6,7 @@ include:
 global:
   values:
     cmd:
-      run_ctr@tpl#use-spec:
+      run_ctr@tmpl#use-spec:
         template@presets?str: templates/run-ctr.yml
 
 tools:
@@ -20,7 +20,7 @@ renderers:
   file:presets:
     alias: presets
 
-- tpl:
+- tmpl:
     include:
     - path: templates/run-ctr.yml
 
@@ -33,7 +33,7 @@ workflow:run:
     - tools
   jobs:
   - task:
-      ref@tpl: workflow:run(test-{{ matrix.preset }})
+      ref@tmpl: workflow:run(test-{{ matrix.preset }})
       matrix_filter: {}
 
 - name: report
@@ -66,11 +66,11 @@ workflow:run:
       # pkgs: ["./..."]
 
       workdir:
-      - __@tpl: |-
+      - __@tmpl: |-
           {{- fs.Join dukkha.WorkDir "golang/testdata" -}}
       config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:
-  - cmd@presets|tpl#use-spec: tools/presets.tpl
-    chdir@tpl: |-
+  - cmd@presets|tmpl#use-spec: tools/presets.tmpl
+    chdir@tmpl: |-
       {{- matrix.workdir | default "" -}}
