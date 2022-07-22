@@ -1,0 +1,9 @@
+tools:
+  cosign:
+  - name: local
+  - name: in-ctr
+    cmd@tlang#use-spec:
+      template: include "cosign.cmd.ctr" .
+
+      include:
+      - text@presets?str: cosign/cmd/ctr.tl

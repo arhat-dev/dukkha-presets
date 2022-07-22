@@ -9,8 +9,6 @@ ignore: |
   */cmd/ctr.yml
   templates/*.yml
   templates/image/*.yml
-  tlang/*.yml
-  tlang/image/*.yml
   tools/*/ctr.yml
   tools/*/local.yml
   golang/*/*.yml

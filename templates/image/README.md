@@ -2,7 +2,7 @@
 
 ## `flavored-tag.tmpl`
 
-## `names.yml`
+## `names.tmpl`
 
 Generate value for `images_names` in tasks like
 
@@ -20,7 +20,7 @@ buildah:build:
       {{- include "image.names" . -}}
 
     include:
-    - text@presets?str: templates/image/names.yml
+    - text@presets?str: templates/image/names.tmpl
     variables:
       base_name: example.com/my-repo/my-app
 

@@ -1,0 +1,13 @@
+tools:
+  golang:
+  - name: local
+  - name: in-ctr
+    cmd@tlang#use-spec:
+      template: include "golang.cmd.ctr" .
+
+      include:
+      - text@presets?str: templates/image/flavored-tag.tl
+      - text@presets?str: golang/cmd/ctr.tl
+
+      variables:
+        version@tlang?str: env.GO_VERSION | default "1.18"

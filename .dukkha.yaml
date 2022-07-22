@@ -7,7 +7,7 @@ global:
   values:
     cmd:
       run_ctr@tmpl#use-spec:
-        template@presets?str: templates/run-ctr.yml
+        template@presets?str: templates/run-ctr.tmpl
 
 tools:
   workflow:
@@ -22,10 +22,10 @@ renderers:
 
 - tmpl:
     include:
-    - path: templates/run-ctr.yml
+    - path: templates/run-ctr.tmpl
   tlang:
     include:
-    - path: tlang/run-ctr.yml
+    - path: templates/run-ctr.tl
 
 workflow:run:
 - name: test

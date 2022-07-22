@@ -2,7 +2,7 @@
 #
 # usage:
 #   foo@tlang#use-spec:
-#     template@presets?str: tlang/run-ctr.yml
+#     template@presets?str: templates/run-ctr.tl
 #     variables:
 #       # preferred tool lookup order
 #       #

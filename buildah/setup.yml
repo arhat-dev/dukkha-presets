@@ -1,0 +1,12 @@
+tools:
+  buildah:
+  - name: local
+  - name: in-ctr
+    cmd@tlang#use-spec:
+      template: include "buildah.cmd.ctr" .
+
+      include:
+      - text@presets?str: buildah/cmd/ctr.tl
+
+      # variables:
+      #   version@tlang?str: env.TOOL_VERSION_BUILDAH | default "latest"

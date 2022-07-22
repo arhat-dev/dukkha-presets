@@ -19,7 +19,7 @@ if [[ "${!key}" != "done" ]]; then
 
     tmpl:dukkha.Self render <<EOF
 __@tmpl#use-spec:
-  template@presets?str: templates/run-ctr.yml
+  template@presets?str: templates/run-ctr.tmpl
   variables:
     order: [podman]
     # for macos
@@ -38,7 +38,7 @@ if [[ "${!key}" != "done" ]]; then
 
     tmpl:dukkha.Self render <<EOF
 __@tmpl#use-spec:
-  template@presets?str: templates/run-ctr.yml
+  template@presets?str: templates/run-ctr.tmpl
   variables:
     order: [nerdctl]
 EOF
@@ -55,7 +55,7 @@ if [[ "${!key}" != "done" ]]; then
 
     tmpl:dukkha.Self render <<EOF
 __@tmpl#use-spec:
-  template@presets?str: templates/run-ctr.yml
+  template@presets?str: templates/run-ctr.tmpl
   variables:
     order: [lima-nerdctl]
     # for macos
@@ -74,7 +74,7 @@ fi
 #
 #     tmpl:dukkha.Self render <<EOF
 # __@tmpl#use-spec:
-#   template@presets?str: templates/run-ctr.yml
+#   template@presets?str: templates/run-ctr.tmpl
 #   variables:
 #     order: [docker]
 # EOF
