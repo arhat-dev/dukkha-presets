@@ -1,11 +1,13 @@
 workflow:run:
 - name: test-tools
   matrix:
-    tool@tmpl: |-
-      {{- $matches := fs.Glob "tools/**/local.yml" -}}
-      {{- range $_, $f := $matches }}
-      - {{ fs.Dir $f | fs.Base }}
-      {{- end }}
+    tool@tlang: |-
+      $matches := fs.Glob "tools/**/local.yml"
+      range $_, $f := $matches
+        `- `
+            fs.Dir $f | fs.Base
+        "\n"
+      end
     workdir:
     - ""
     - TEST_WORKDIR
@@ -21,15 +23,13 @@ workflow:run:
 
   jobs:
   - name: ctr
-    if@tmpl: &is_linux |-
-      {{- eq host.kernel "linux" | toString -}}
+    if@tlang: &is_linux eq host.kernel "linux" | toString
     env:
     - name: kind
       value: ctr
     - &dukkha_only_path
       name: PATH
-      value@tmpl: |-
-        {{- fs.Dir (eval.Shell "command -v dukkha").Stdout -}}
+      value@tlang: fs.Dir (eval.Shell "command -v dukkha").Stdout
 
     shell@env: &render |-
       echo "--- START of ${kind}.yml ---"
@@ -39,8 +39,7 @@ workflow:run:
           {{- include "tools.${MATRIX_TOOL}.${kind}" . -}}
 
         include:
-        - text@tmpl|presets?str: |-
-            {{- path.Join "tools" "${MATRIX_TOOL}" "${kind}.yml" -}}
+        - text@tlang|presets?str: path.Join "tools" "${MATRIX_TOOL}" "${kind}.yml"
 
         variables:
           version: ${MATRIX_VERSION}
@@ -57,13 +56,11 @@ workflow:run:
     - *dukkha_only_path
     - &add_fake_bin_path
       name: PATH
-      value@tmpl: |-
-        {{- fs.Join dukkha.WorkDir "tools" "testdata" "bin" -}}:{{ env.PATH }}
+      value@tlang: fs.Join dukkha.WorkDir "tools" "testdata" "bin"; ':'; env.PATH;
     shell@env: *render
 
   - name: Local first, fallback to ctr
-    if@tmpl: &is_linux |-
-      {{- eq host.kernel "linux" | toString -}}
+    if@tlang: *is_linux
     env:
     - *dukkha_only_path
     - *add_fake_bin_path
@@ -73,8 +70,7 @@ workflow:run:
           {{- include (printf "tools.%s.local" matrix.tool) . -}}
 
         include:
-        - text@tmpl|presets?str: |-
-            {{- path.Join "tools" matrix.tool "local.yml" -}}
+        - text@tlang|presets?str: path.Join "tools" matrix.tool "local.yml"
 
         variables@env:
           version: ${MATRIX_VERSION}
@@ -83,9 +79,11 @@ workflow:run:
           args: ${MATRIX_ARGS}
 
       ops:
-      - template@tmpl?str: |-
-          {{- if or (eq VALUE "null") (not VALUE) -}}
-            echo {{ path.Join "tools" matrix.tool "ctr.yml" -}}
-          {{- else -}}
-            echo {{ path.Join "meta" "VALUE.yml" -}}
-          {{- end -}}
+      - template@tlang?str: |-
+          `echo `
+
+          if or (eq VALUE "null") (not VALUE)
+              path.Join "tools" matrix.tool "ctr.yml"
+          else
+              path.Join "meta" "VALUE.yml"
+          end

@@ -18,8 +18,7 @@ tools:
         # version@env?str: ${GO_VERSION}
         flavor@env: ${FLAVOR}
         volume: dukkha-preset
-        workdir@tmpl: |-
-          {{- fs.Join dukkha.WorkDir "golang" "testdata" -}}
+        workdir@tlang: fs.Join dukkha.WorkDir "golang" "testdata"
         run_ctr@env: ${RUN_CTR}
 
 # we are using virtual key for task (which is a inline map in dukkha)
@@ -48,14 +47,12 @@ golang:test:
   - name: PROFILE_DIR
     value: golang/testdata/build/test-profile
   matrix:
-    pkg@tmpl: |-
-      {{-
+    pkg@tlang: |-
         (eval.Shell "cd golang/testdata && go list ./...").Stdout
           | removePrefix
               ((eval.Shell "cd golang/testdata && go list -m").Stdout | strings.TrimSpace)
           | removePrefix "/"
           | addPrefix "- "
-      -}}
   hooks:
     before:
     - shell: tmpl:mkdir -p ${PROFILE_DIR}
@@ -83,17 +80,13 @@ workflow:run:
       rm -rf golang/testdata/build || true
 
   - name: golang:in-ctr:build
-    if@tmpl: &is_linux_or_darwin |-
-      {{- eq host.kernel "linux" "darwin" -}}
+    if@tlang: &is_linux_or_darwin eq host.kernel "linux" "darwin"
     task:
       ref: golang:in-ctr:build(dukkha-preset)
       matrix_filter:
         kernel:
         - __@env: ${HOST_KERNEL}
-    next@tmpl: |-
-      {{- if not values.golang.in_ctr.done -}}
-        golang:in-ctr:build
-      {{- end -}}
+    next@tlang: if not values.golang.in_ctr.done; `golang:in-ctr:build`; end
     env: &ctr_env
     - name: FLAVOR
       value: native
@@ -103,7 +96,7 @@ workflow:run:
       value@presets?str|shell?str: scripts/test/enumerate-run-ctr.sh
 
   - shell: *inspect_build_artifacts
-    if@tmpl: *is_linux_or_darwin
+    if@tlang: *is_linux_or_darwin
 
   - task:
       ref: golang:test(dukkha-preset-pkg)
@@ -114,15 +107,12 @@ workflow:run:
       rm -rf golang/testdata/build/test-profile
 
   - name: golang:in-ctr:test
-    if@tmpl: *is_linux_or_darwin
+    if@tlang: *is_linux_or_darwin
     task:
       ref: golang:in-ctr:test(dukkha-preset-pkg)
       matrix_filter: {}
-    next@tmpl: |-
-      {{- if not values.golang.in_ctr.done -}}
-        golang:in-ctr:test
-      {{- end -}}
+    next@tmpl: if not values.golang.in_ctr.done; `golang:in-ctr:test` ; end
     env: *ctr_env
 
   - shell: *inspect_test_profile
-    if@tmpl: *is_linux_or_darwin
+    if@tlang: *is_linux_or_darwin

@@ -23,6 +23,9 @@ renderers:
 - tmpl:
     include:
     - path: templates/run-ctr.yml
+  tlang:
+    include:
+    - path: tlang/run-ctr.yml
 
 workflow:run:
 - name: test
@@ -66,11 +69,9 @@ workflow:run:
       # pkgs: ["./..."]
 
       workdir:
-      - __@tmpl: |-
-          {{- fs.Join dukkha.WorkDir "golang/testdata" -}}
+      - __@tlang: fs.Join dukkha.WorkDir "golang/testdata"
       config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:
   - cmd@presets|tmpl#use-spec: tools/presets.tmpl
-    chdir@tmpl: |-
-      {{- matrix.workdir | default "" -}}
+    chdir@tlang: matrix.workdir | default ""

@@ -37,6 +37,5 @@ workflow:run:
 
   jobs:
   - cmd@presets|tmpl#use-spec: tools/presets.tmpl
-    chdir@tmpl: |-
-      {{- matrix.workdir | default "" -}}
+    chdir@tlang: matrix.workdir | default ""
 ```

@@ -5,7 +5,7 @@ Generate [`editorconfig-checker`](https://github.com/editorconfig-checker/editor
 ## Usage
 
 ```yaml
-foo@tmpl:
+foo@tmpl#use-spec:
   template@presets?str: tools/editorconfig-checker/ctr.yml
 
   variables:

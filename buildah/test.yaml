@@ -71,8 +71,7 @@ workflow:run:
 
   jobs:
   - name: buildah:in-ctr:xbuild
-    if@tmpl: &is_linux |-
-      {{- eq host.kernel "linux" | toString -}}
+    if@tlang: &is_linux eq host.kernel "linux"
     env:
     # env to set run_ctr variable in tool
     - name: lima_instance
@@ -84,7 +83,4 @@ workflow:run:
       ref: buildah:in-ctr:xbuild(dukkha-preset)
       matrix_filter: {}
 
-    next@tmpl: |-
-      {{- if not values.buildah.in_ctr.done -}}
-        buildah:in-ctr:xbuild
-      {{- end -}}
+    next@tlang: if not values.buildah.in_ctr.done; `buildah:in-ctr:xbuild`; end

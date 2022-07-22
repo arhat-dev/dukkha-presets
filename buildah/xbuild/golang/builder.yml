@@ -1,84 +1,75 @@
 # see ../../../golang/tool-in-ctr.yml
 # treat BUILDER_FLAVOR as IMAGE_FLAVOR
-ref@tmpl: |-
-  {{- $flavor := env.BUILDER_FLAVOR | default "native" -}}
-  {{- $ver := env.GO_VERSION | default "1.18" -}}
-  {{- $arch := matrix.arch | default host.arch_simple | archconv.HardFloatArch -}}
-  {{- $host_arch := host.arch_simple | default "amd64" | archconv.HardFloatArch -}}
+ref@tlang: |-
+  $flavor := env.BUILDER_FLAVOR | default "native"
+  $ver := env.GO_VERSION | default "1.18"
+  $arch := matrix.arch | default host.arch_simple | archconv.HardFloatArch
+  $host_arch := host.arch_simple | default "amd64" | archconv.HardFloatArch
 
-  {{- /* assume it's cgo build so we can produce image tag correctly (for cross env) */ -}}
-  {{- $cgo := true -}}
+  # assume it's cgo build so we can produce image tag correctly (for cross env)
+  $cgo := true
 
-  {{- $tag := "" -}}
-  {{- if eq $flavor "" "native" "alpine-native" -}}
+  $tag := ""
+  if eq $flavor "" "native" "alpine-native"
+    $tag = printf "%s-alpine" $ver
+  else if eq $flavor "debian-native"
+    $tag = printf "%s-debian" $ver
+  else if eq $flavor "cross" "alpine-cross"
+    $host_arch := host.arch_simple
+    if and (and $cgo (ne $host_arch $arch)) \
+            (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4"))
+      $host_arch = $arch
+    end
 
-    {{- $tag = printf "%s-alpine" $ver -}}
+    if eq $arch "armv5" "mips64le"
+      if and (and $cgo (ne $host_arch $arch)) \
+              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64"))
+        $host_arch = $arch
+      end
+      $tag = printf "%s-debian-%s-%s" $ver $host_arch $arch
+    else
+      $tag = printf "%s-alpine-%s-%s" $ver $host_arch $arch
+    end
 
-  {{- else if eq $flavor "debian-native" -}}
+  else if eq $flavor "debian-cross"
 
-    {{- $tag = printf "%s-debian" $ver -}}
+    $host_arch := host.arch_simple
+    if and (and $cgo (ne $host_arch $arch)) \
+            (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64"))
+      # fallback to qemu mode due to lack of cross gcc
+      $host_arch = $arch
+    end
 
-  {{- else if eq $flavor "cross" "alpine-cross" -}}
+    if eq $arch "armv6"
+      if and (and $cgo (ne $host_arch $arch)) \
+              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4"))
+        # fallback to qemu mode due to lack of cross gcc
+        $host_arch = $arch
+      end
+      $tag = printf "%s-alpine-%s-%s" $ver $host_arch $arch
+    else
+      $tag = printf "%s-debian-%s-%s" $ver $host_arch $arch
+    end
 
-    {{- $host_arch := host.arch_simple -}}
-    {{- if and
-              (and $cgo (ne $host_arch $arch))
-              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4")) -}}
-      {{- $host_arch = $arch -}}
-    {{- end -}}
+  else if eq $flavor "qemu" "alpine-qemu"
 
-    {{- if eq $arch "armv5" "mips64le" -}}
-      {{- if and
-                (and $cgo (ne $host_arch $arch))
-                (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64")) -}}
-        {{- $host_arch = $arch -}}
-      {{- end -}}
-      {{- $tag = printf "%s-debian-%s-%s" $ver $host_arch $arch -}}
-    {{- else -}}
-      {{- $tag = printf "%s-alpine-%s-%s" $ver $host_arch $arch -}}
-    {{- end -}}
+    if eq $arch "armv5" "mips64le"
+      $tag = printf "%s-debian-%s" $ver $arch
+    else
+      $tag = printf "%s-alpine-%s" $ver $arch
+    end
 
-  {{- else if eq $flavor "debian-cross" -}}
+  else if eq $flavor "debian-qemu"
 
-    {{- $host_arch := host.arch_simple -}}
-    {{- if and
-              (and $cgo (ne $host_arch $arch))
-              (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4" "arm64")) -}}
-      {{- /* fallback to qemu mode due to lack of cross gcc */ -}}
-      {{- $host_arch = $arch -}}
-    {{- end -}}
+    if eq $arch "armv6"
+      $tag = printf "%s-alpine-%s" $ver $arch
+    else
+      $tag = printf "%s-debian-%s" $ver $arch
+    end
 
-    {{- if eq $arch "armv6" -}}
-      {{- if and
-                (and $cgo (ne $host_arch $arch))
-                (not (eq $host_arch "amd64" "amd64v1" "amd64v2" "amd64v3" "amd64v4")) -}}
-        {{- /* fallback to qemu mode due to lack of cross gcc */ -}}
-        {{- $host_arch = $arch -}}
-      {{- end -}}
-      {{- $tag = printf "%s-alpine-%s-%s" $ver $host_arch $arch -}}
-    {{- else -}}
-      {{- $tag = printf "%s-debian-%s-%s" $ver $host_arch $arch -}}
-    {{- end -}}
+  end
 
-  {{- else if eq $flavor "qemu" "alpine-qemu" -}}
-
-    {{- if eq $arch "armv5" "mips64le" -}}
-      {{- $tag = printf "%s-debian-%s" $ver $arch -}}
-    {{- else -}}
-      {{- $tag = printf "%s-alpine-%s" $ver $arch -}}
-    {{- end -}}
-
-  {{- else if eq $flavor "debian-qemu" -}}
-
-    {{- if eq $arch "armv6" -}}
-      {{- $tag = printf "%s-alpine-%s" $ver $arch -}}
-    {{- else -}}
-      {{- $tag = printf "%s-debian-%s" $ver $arch -}}
-    {{- end -}}
-
-  {{- end -}}
-
-  ghcr.io/arhat-dev/builder-golang:{{- $tag -}}
+  `ghcr.io/arhat-dev/builder-golang:` ; $tag
 
 extra_pull_args:
 - --policy
