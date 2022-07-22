@@ -2,7 +2,7 @@ workflow:run:
 - name: test-tools
   matrix:
     tool@tlang: |-
-      $matches := fs.Glob "tools/**/local.yml"
+      $matches := fs.Glob "tools/**/local.tmpl"
       range $_, $f := $matches
         `- `
             fs.Dir $f | fs.Base
@@ -29,17 +29,17 @@ workflow:run:
       value: ctr
     - &dukkha_only_path
       name: PATH
-      value@tlang: fs.Dir (eval.Shell "command -v dukkha").Stdout
+      value@tlang: fs.Lookup "dukkha" | fs.Dir
 
     shell@env: &render |-
-      echo "--- START of ${kind}.yml ---"
-      dukkha render <<EOF
+      echo "--- START of ${kind}.tmpl ---"
+      tmpl:dukkha.Self render <<EOF
       __@tmpl#use-spec:
         template: |-
           {{- include "tools.${MATRIX_TOOL}.${kind}" . -}}
 
         include:
-        - text@tlang|presets?str: path.Join "tools" "${MATRIX_TOOL}" "${kind}.yml"
+        - text@tlang|presets?str: path.Join "tools" "${MATRIX_TOOL}" "${kind}.tmpl"
 
         variables:
           version: ${MATRIX_VERSION}
@@ -47,7 +47,7 @@ workflow:run:
           config: ${MATRIX_CONFIG}
           args: ${MATRIX_ARGS}
       EOF
-      echo "--- END of ${kind}.yml ---"
+      echo "--- END of ${kind}.tmpl ---"
 
   - name: local
     env:
@@ -70,7 +70,7 @@ workflow:run:
           {{- include (printf "tools.%s.local" matrix.tool) . -}}
 
         include:
-        - text@tlang|presets?str: path.Join "tools" matrix.tool "local.yml"
+        - text@tlang|presets?str: path.Join "tools" matrix.tool "local.tmpl"
 
         variables@env:
           version: ${MATRIX_VERSION}
@@ -83,7 +83,7 @@ workflow:run:
           `echo `
 
           if or (eq VALUE "null") (not VALUE)
-              path.Join "tools" matrix.tool "ctr.yml"
+              path.Join "tools" matrix.tool "ctr.tmpl"
           else
-              path.Join "meta" "VALUE.yml"
+              path.Join "meta" "VALUE.tmpl"
           end

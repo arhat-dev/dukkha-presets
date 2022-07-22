@@ -6,7 +6,7 @@ Run [`yamllint`](https://github.com/adrienverge/yamllint) to lint yaml files
 
 ```yaml
 cmd@tmpl#use-spec:
-  template@http?str: https://cdn.jsdelivr.net/gh/arhat-dev/dukkha-presets@master/tools/yamllint/local.yml
+  template@presets?str: tools/yamllint/local.tmpl
   variables:
     # version of yamllint
     #

@@ -4,7 +4,7 @@ Generate cmd list for `buildah` tool.
 
 ## Usage
 
-### `ctr.yml`
+### `ctr.tmpl`
 
 ```yaml
 tools:
@@ -14,7 +14,7 @@ tools:
         {{- include "buildah.cmd.ctr" . -}}
 
       include:
-      - text@presets?str: buildah/cmd/ctr.yml
+      - text@presets?str: buildah/cmd/ctr.tmpl
 
       variables:
         # buildah version

@@ -1,4 +1,4 @@
-# see ../../../golang/tool-in-ctr.yml
+# see ../../../golang/tool-in-ctr.tmpl
 # treat BUILDER_FLAVOR as IMAGE_FLAVOR
 ref@tlang: |-
   $flavor := env.BUILDER_FLAVOR | default "native"

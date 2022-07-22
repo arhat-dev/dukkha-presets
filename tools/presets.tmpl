@@ -7,8 +7,8 @@ template: |-
   {{- $cmd -}}
 
 include:
-- text@tlang|presets?str: path.Join "tools" matrix.tool "local.yml"
-- text@tlang|presets?str: path.Join "tools" matrix.tool "ctr.yml"
+- text@tlang|presets?str: path.Join "tools" matrix.tool "local.tmpl"
+- text@tlang|presets?str: path.Join "tools" matrix.tool "ctr.tmpl"
 
 variables:
   version@tlang?str: matrix.version | default ""

@@ -2,7 +2,7 @@
 
 ## Usage
 
-### `pkg.yml`
+### `pkg.tmpl`
 
 Test local package `./{pkg}`
 
@@ -29,7 +29,7 @@ golang:test:
     template: |-
       {{- include "golang.test.pkg" . -}}
     include:
-    - text@presets?str: golang/test/pkg.yml
+    - text@presets?str: golang/test/pkg.tmpl
 
     variables:
       # Directory to write profile generated during test

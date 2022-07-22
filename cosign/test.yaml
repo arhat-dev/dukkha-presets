@@ -6,7 +6,7 @@ tools:
       template: |-
         {{- include "cosign.cmd.ctr" . -}}
       include:
-      - text@presets?str: cosign/cmd/ctr.yml
+      - text@presets?str: cosign/cmd/ctr.tmpl
       variables: {}
         # run_ctr:
 

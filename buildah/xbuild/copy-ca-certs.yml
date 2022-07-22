@@ -1,7 +1,7 @@
 copy:
   from:
     step:
-      id@tlang: env.CA_SRC_STEP | "builder"
+      id@tlang: env.CA_SRC_STEP | default "builder"
       path: /etc/ssl/certs
   to:
     path: /etc/ssl/certs

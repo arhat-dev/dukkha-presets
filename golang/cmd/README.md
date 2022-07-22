@@ -4,19 +4,18 @@ Generate cmd list for `golang` tool
 
 ## Usage
 
-### `ctr.yml`
+### `ctr.tmpl`
 
 ```yaml
 tools:
   golang:
-  - cmd@tmpl:
-      template: |-
-        {{- include "golang.cmd.ctr" . -}}
+  - cmd@tlang:
+      template: include "golang.cmd.ctr" .
 
       include:
       # required templates dependency
-      - text@presets?str: templates/image/flavored-tag.tmpl
-      - text@presets?str: golang/cmd/ctr.yml
+      - text@presets?str: templates/image/flavored-tag.tl
+      - text@presets?str: golang/cmd/ctr.tl
 
       variables:
         # golang toolchain version

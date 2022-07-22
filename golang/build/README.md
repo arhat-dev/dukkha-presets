@@ -4,7 +4,7 @@ Generate `golang:build` task spec for a golang binary
 
 ## Usage
 
-### `cmd.yml`
+### `cmd.tmpl`
 
 Build executables `{output_dir}/{cmd}.{kernel}.{arch}` from `./cmd/{cmd}`
 
@@ -22,7 +22,7 @@ golang:build:
       {{- include "golang.build.cmd" . -}}
 
     include:
-    - text@presets?str: golang/build/cmd.yml
+    - text@presets?str: golang/build/cmd.tmpl
 
     variables:
       # Directory to store artifacts

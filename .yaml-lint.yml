@@ -6,11 +6,6 @@ ignore: |
   build/
   vendor/
   .dukkha/cache/
-  */cmd/ctr.yml
-  templates/*.yml
-  templates/image/*.yml
-  tools/*/ctr.yml
-  tools/*/local.yml
   golang/*/*.yml
 
 rules:

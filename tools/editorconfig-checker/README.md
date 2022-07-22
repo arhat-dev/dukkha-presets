@@ -6,7 +6,7 @@ Generate [`editorconfig-checker`](https://github.com/editorconfig-checker/editor
 
 ```yaml
 foo@tmpl#use-spec:
-  template@presets?str: tools/editorconfig-checker/ctr.yml
+  template@presets?str: tools/editorconfig-checker/ctr.tmpl
 
   variables:
     # version of editorconfig-checker
@@ -20,7 +20,7 @@ foo@tmpl#use-spec:
     config: ".ecrc"
 
     #
-    # following variables are only available in ctr.yml
+    # following variables are only available in ctr.tmpl
     #
 
     # workdir in container when running editorconfig-checker

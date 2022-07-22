@@ -12,7 +12,7 @@ tools:
         {{- include "golang.cmd.ctr" . -}}
       include:
       - text@presets?str: templates/image/flavored-tag.tmpl
-      - text@presets?str: golang/cmd/ctr.yml
+      - text@presets?str: golang/cmd/ctr.tmpl
 
       variables:
         # version@env?str: ${GO_VERSION}
@@ -36,7 +36,7 @@ golang:build:
     template: |-
       {{- include "golang.build.cmd" . -}}
     include:
-    - text@presets?str: golang/build/cmd.yml
+    - text@presets?str: golang/build/cmd.tmpl
     variables:
       module_name: arhat.dev/dukkha-preset
   chdir: golang/testdata
@@ -61,7 +61,7 @@ golang:test:
     template: |-
       {{- include "golang.test.pkg" . -}}
     include:
-    - text@presets?str: golang/test/pkg.yml
+    - text@presets?str: golang/test/pkg.tmpl
 
   chdir: golang/testdata
 

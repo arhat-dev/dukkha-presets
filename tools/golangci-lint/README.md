@@ -10,7 +10,7 @@ foo@tmpl#use-spec:
     {{- include "tools.golangci-lint.ctr" . -}}
 
   include:
-  - text@presets?str: tools/golangci-lint/ctr.yml
+  - text@presets?str: tools/golangci-lint/ctr.tmpl
 
   variables:
     # version of golangci-lint
