@@ -4,9 +4,8 @@ define "image.names"
   $manifest_suffix := var.manifest_suffix | default ""
   $kernel := var.kernel | default matrix.kernel | default host.kernel | default "linux"
   $arch := var.arch | default matrix.arch | default host.arch_simple | default "amd64"
-  $version := var.version | default matrix.version \
-        | default env.VERSION | default git.tag
-        | default "" | strings.TrimPrefix "v"
+  $version := var.version | default matrix.version | default env.VERSION \
+              | default git.tag | default "" | strings.TrimPrefix "v"
 
   $can_set_major := true
 
