@@ -48,10 +48,10 @@ golang:test:
     value: golang/testdata/build/test-profile
   matrix:
     pkg@tlang: |-
-        (eval.Shell "cd golang/testdata && go list ./...").Stdout
-          | removePrefix
-              ((eval.Shell "cd golang/testdata && go list -m").Stdout | strings.TrimSpace)
-          | removePrefix "/"
+        (eval.Shell "cd golang/testdata && go list ./...").Stdout \
+          | removePrefix \
+              ((eval.Shell "cd golang/testdata && go list -m").Stdout | strings.TrimSpace) \
+          | removePrefix "/" \
           | addPrefix "- "
   hooks:
     before:

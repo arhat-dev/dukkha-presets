@@ -69,7 +69,7 @@ workflow:run:
       # pkgs: ["./..."]
 
       workdir:
-      - __@tlang: fs.Join dukkha.WorkDir "golang/testdata"
+      - __@tlang: fs.Join dukkha.WorkDir "golang" "testdata"
       config: ["../../tools/testdata/golangci-lint.yml"]
 
   jobs:
