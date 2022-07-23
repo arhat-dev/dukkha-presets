@@ -26,10 +26,10 @@ golang:build:
           {{- $suffix = ".exe" -}}
         {{- end -}}
 
-        file="{{ include "artifacts.bin-name" . }}"
+        file="{{ matrix.cmd }}-{{ matrix.kernel }}-{{ matrix.arch }}{{ $suffix }}"
 
         hashes="sha256 sha512 md5"
         for hash in $hashes ; do
-          printf "%s  dukkha{{- $suffix -}}" "$("tmpl:$hash" <"$file")" \
-            > "dukkha-{{- matrix.kernel -}}-{{- matrix.arch -}}.$hash"
+          printf "%s  {{ matrix.cmd }}{{ $suffix }}" "$("tmpl:$hash" <"$file")" \
+            > "{{ matrix.cmd }}-{{ matrix.kernel }}-{{ matrix.arch }}.$hash"
         done
