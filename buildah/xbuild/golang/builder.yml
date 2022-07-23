@@ -2,7 +2,7 @@
 # treat BUILDER_FLAVOR as IMAGE_FLAVOR
 ref@tlang: |-
   $flavor := env.BUILDER_FLAVOR | default "native"
-  $ver := env.GO_VERSION | default "1.18"
+  $ver := values.golang.version | default "1.18"
   $arch := matrix.arch | default host.arch_simple | archconv.HardFloatArch
   $host_arch := host.arch_simple | default "amd64" | archconv.HardFloatArch
 

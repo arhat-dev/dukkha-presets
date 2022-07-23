@@ -10,4 +10,4 @@ tools:
       - text@presets?str: golang/cmd/ctr.tl
 
       variables:
-        version@tlang?str: env.GO_VERSION | default "1.18"
+        version@tlang?str: values.golang.version | default "1.18"

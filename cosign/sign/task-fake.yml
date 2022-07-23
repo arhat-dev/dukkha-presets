@@ -1,0 +1,11 @@
+cosign:sign:
+- name: fake
+  matrix@file: *matrix
+  private_key@file: pkg/tools/cosign/testdata/cosign.key
+  private_key_password: testdata
+  verify: true
+  public_key@file: pkg/tools/cosign/testdata/cosign.pub
+  files:
+  - path@tlang: *blob_path
+    output@tlang: |-
+      "build/dukkha-"; matrix.kernel; "-"; matrix.arch; ".sig"

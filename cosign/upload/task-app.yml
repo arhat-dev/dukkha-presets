@@ -1,0 +1,22 @@
+cosign:upload:
+- name: app
+  matrix@tlang: values.artifacts.matrix
+  signing:
+    enabled: true
+    annotations@tlang: values.artifacts.labels
+    # required
+    private_key@env: ${COSIGN_PRIVATE_KEY}
+    # optional
+    private_key_password@tlang: env.COSIGN_PRIVATE_KEY_PASSWORD
+    verify: true
+    public_key@tlang|http: values.cosign.public_key_url
+
+  files:
+  - path@tlang: |-
+      "build/" ; matrix.cmd; '-'; matrix.kernel; '-'; matrix.arch
+      if eq matrix.kernel "windows"
+        ".exe"
+      end
+    content_type: ""
+
+  image_names@tlang: values.artifacts.names

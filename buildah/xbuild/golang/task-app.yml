@@ -1,0 +1,57 @@
+buildah:push:
+- name: app
+  matrix@tlang: values.images.matrix
+  image_names@tlang: values.images.names
+
+buildah:xbuild:
+- name: app
+  matrix@tlang: values.images.matrix
+  image_names@tlang: values.images.names
+  steps:
+  - id: builder
+    from:
+      ref: ghcr.io/arhat-dev/builder-golang:1.18-alpine
+
+  # copy project source code
+  - copy:
+      from:
+        local:
+          # yamllint disable-line rule:quoted-strings
+          path: "."
+      to:
+        path: /app
+
+  # run build process in container
+  - run:
+      script@tmpl: |-
+        #!/bin/sh
+
+        set -ex
+
+        dukkha run golang local build app \
+          -m cmd={{ matrix.cmd }} \
+          -m kernel=linux \
+          -m arch={{ matrix.arch }}
+
+      extra_args:
+      - --tty
+
+  # build final image
+  - from:
+      ref: scratch
+
+  - copy:
+      from:
+        step:
+          id: builder
+          path@tmpl: /app/build/{{ matrix.cmd }}-linux-{{ matrix.arch }}
+      to:
+        path@tmpl: /{{ matrix.cmd }}
+
+  - set:
+      labels@tlang: values.images.labels
+      entrypoint@:
+      - __@tmpl: /{{ matrix.cmd }}
+      env:
+      - name: PATH
+        value: /

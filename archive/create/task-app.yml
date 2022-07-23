@@ -1,0 +1,47 @@
+archive:create:
+- name: app
+  matrix@tlang: values.artifacts.matrix
+  env:
+  - name: name_prefix
+    value@tlang: matrix.cmd; '-'; matrix.kernel; '-'; matrix.arch
+
+  compression:
+    enabled: true
+    level: "9"
+
+  output@tlang: |-
+    fs.Join "build" env.name_prefix
+    if eq matrix.kernel "windows"; ".zip"; else; ".tar.gz"; end
+
+  files:
+  # app executable
+  - from@tlang: |-
+      fs.Join "build" env.name_prefix
+      if eq matrix.kernel "windows"
+        ".exe"
+      end
+
+    to@tlang: |-
+      env.name_prefix; "/"; matrix.cmd
+      if eq matrix.kernel "windows"
+        ".exe"
+      end
+
+  # license
+  - from: LICENSE.txt
+    to@tlang: env.name_prefix ; "/LICENSE"
+
+  # cosign signature
+  - from@tmpl: build/{{- env.name_prefix -}}.sig
+    to@tlang: env.name_prefix ; "/cosign.sig"
+
+  # checksums
+
+  - from@tmpl: build/{{- env.name_prefix -}}.sha256
+    to@tlang: env.name_prefix ; "/sha256"
+
+  - from@tmpl: build/{{- env.name_prefix -}}.sha512
+    to@tlang: env.name_prefix ; "/sha512"
+
+  - from@tmpl: build/{{- env.name_prefix -}}.md5
+    to@tlang: env.name_prefix ; "/md5"

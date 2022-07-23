@@ -1,0 +1,11 @@
+github:release:
+- name: fake
+  draft: true
+  tag@tlang: env.GIT_TAG
+  pre_release: true
+  title@tlang: env.GIT_TAG
+  notes@file?str|tmpl?str: cicd/artifacts/release-notes.md
+  files:
+  - path: build/*.tar.gz
+  - path: build/*.zip
+  - path: build/{sha256,sha512,md5}.txt

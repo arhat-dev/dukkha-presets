@@ -1,0 +1,21 @@
+golang:test:
+- name: pkg
+  matrix:
+    pkg@tlang: |-
+      (eval.Shell "go list ./pkg/...").Stdout \
+        | removePrefix ((eval.Shell "go list -m").Stdout | trimSpace) \
+        | removePrefix "/" \
+        | addPrefix "- "
+
+  hooks:
+    before:
+    - idle@tlang: mkdir "-p" values.test.profile_dir
+
+  __@tmpl#use-spec:
+    include:
+    - path@presets#cached-file: golang/test/pkg.tmpl
+    template: |-
+      {{- include "golang.test.pkg" . -}}
+    variables:
+      profile_dir@tlang: values.test.profile_dir
+      cover_pkg: ./...

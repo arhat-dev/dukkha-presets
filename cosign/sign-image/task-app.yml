@@ -1,0 +1,14 @@
+cosign:sign-image:
+- name: app
+  matrix@talng: values.images.matrix
+  private_key@env: ${COSIGN_PRIVATE_KEY}
+  private_key_password@tlang: env.COSIGN_PRIVATE_KEY_PASSWORD
+  verify: true
+  public_key@tlang|http: values.cosign.public_key_url
+  annotations@tlang: values.images.labels
+
+  image_names@!:
+    value@tlang?str: values.images.names
+    # cosign cannot sign manifests
+    select:
+      .[].manifest = ""

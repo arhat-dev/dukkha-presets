@@ -1,0 +1,35 @@
+golang:build:
+- name: app
+  matrix@tlang: values.artifacts.matrix
+  __@tmpl#use-spec:
+    include:
+    - text@presets: golang/build/cmd.tmpl
+    template: |-
+      {{- include "golang.build.cmd" . -}}
+
+  tags:
+  - netgo
+  - osusergo
+  - timetzdata
+  extra_args:
+  - -buildmode=exe
+  - -mod=vendor
+  - -trimpath
+  - -buildvcs=false
+
+  hooks:
+    after:matrix:success:
+    - chdir: build
+      shell@tmpl: |-
+        {{- $suffix := "" -}}
+        {{- if eq matrix.kernel "windows" -}}
+          {{- $suffix = ".exe" -}}
+        {{- end -}}
+
+        file="{{ include "artifacts.bin-name" . }}"
+
+        hashes="sha256 sha512 md5"
+        for hash in $hashes ; do
+          printf "%s  dukkha{{- $suffix -}}" "$("tmpl:$hash" <"$file")" \
+            > "dukkha-{{- matrix.kernel -}}-{{- matrix.arch -}}.$hash"
+        done

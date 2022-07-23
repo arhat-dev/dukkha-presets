@@ -1,7 +1,7 @@
 global:
-  env:
-  - name: GO_VERSION
-    value: "1.18"
+  values:
+    golang:
+      version: "1.18"
 
 tools:
   golang:
@@ -15,7 +15,7 @@ tools:
       - text@presets?str: golang/cmd/ctr.tmpl
 
       variables:
-        # version@env?str: ${GO_VERSION}
+        # version@tlang?str: values.golang.version
         flavor@env: ${FLAVOR}
         volume: dukkha-preset
         workdir@tlang: fs.Join dukkha.WorkDir "golang" "testdata"
@@ -28,7 +28,7 @@ golang:build:
 - name: dukkha-preset
   matrix@!:
     value@tmpl|presets: |-
-      matrix/golang/{{- env.GO_VERSION -}}/common.yml
+      matrix/golang/{{- values.golang.version -}}/common.yml
     select: |-
       .include.[].cmd = ["dukkha-preset", "foo"] | .cmd = ["dukkha-preset", "foo"]
 

@@ -1,0 +1,5 @@
+docker:login:
+- name: ghcr
+  registry: ghcr.io
+  username@env: ${GHCR_USER}
+  password@env: ${GHCR_PASS}
